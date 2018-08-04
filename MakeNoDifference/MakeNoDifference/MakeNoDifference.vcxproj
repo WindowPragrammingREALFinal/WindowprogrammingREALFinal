@@ -140,16 +140,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ImageLoad.cpp" />
+    <ClCompile Include="LoadDifferencePosition.cpp" />
     <ClCompile Include="mainFrame.cpp" />
     <ClCompile Include="TimeBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageLoad.h" />
+    <ClInclude Include="LoadDifferencePosition.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TimeBar.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
