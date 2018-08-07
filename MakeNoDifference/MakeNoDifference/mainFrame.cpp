@@ -101,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
-	hWnd = CreateWindow(lpszClass, L"Make No Difference!", WS_OVERLAPPEDWINDOW, 0, -30, Height, Weight, NULL, (HMENU)NULL, hInstance, NULL);
+	hWnd = CreateWindow(lpszClass, L"Make No Difference!", WS_OVERLAPPEDWINDOW, 0, 0, Height, Weight, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -225,10 +225,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			copyBit = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
 			oldcopyBit = (HBITMAP)SelectObject(memdc, copyBit);
 			PatBlt(memdc, 0, 0, ClientRect.right, ClientRect.bottom, WHITENESS);
-			//StretchBlt(memdc, SideSize, SideSize, ClientRect.right - SideSize, ClientRect.bottom - SideSize, memdc, SideSize, SideSize, ClientRect.right - SideSize, ClientRect.bottom - SideSize, WHITENESS);
 			hBrush = CreateSolidBrush(RGB(50, 100, 153));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 145, timerWidthSize);
+			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 150, timerWidthSize);
 		
 			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber);
 			if (correct != 0) {

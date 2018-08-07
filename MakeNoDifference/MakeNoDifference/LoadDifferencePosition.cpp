@@ -14,7 +14,7 @@ void LoadDifferenctPosition(int root, HWND hWnd) // 그림을 로드시에 메모장에서 �
 	OFN.lpstrFilter = filter;
 	OFN.lpstrFile = lpstrFile;
 	OFN.nMaxFile = 256;
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < 5; ++i) { // 이곳이 파일에서 좌표들을 불러와 저장하는곳
 		position[i].x = i * 100;
 		position[i].y = i * 100;
 	}
