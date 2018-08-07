@@ -1,5 +1,7 @@
 #include <Windows.h>
 #include <atlimage.h>
+#include <iostream>
+#include <fstream>
 
 #define Height 1250
 #define Weight 700
@@ -44,6 +46,8 @@ CImage img;
 CImage imgg;
 CImage r;
 
+std::ofstream dir;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
@@ -51,6 +55,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HDC memDC;
 	HBITMAP hBitmap;
 	HBRUSH hBrush, oldBrush;
+
+	static WCHAR LoadText[512] = { 0 };
+
 	static BOOL edit = FALSE, imageOn = FALSE;
 	static BOOL keyDown = FALSE;
 	static int mx = 0, my = 0;
@@ -122,16 +129,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			SetTextColor(memDC, RGB(0, 0, 0));
 			TextOut(memDC, 26, 630, L"입력 종료", lstrlen(L"입력 종료"));
+			TextOut(memDC, 22 + 1 * 130, 630, L"되돌리기", lstrlen(L"되돌리기"));
 			SetTextColor(memDC, RGB(100, 100, 100));
 		}
 		else
 		{
+			SetTextColor(memDC, RGB(100, 100, 100));
+			TextOut(memDC, 22 + 1 * 130, 630, L"되돌리기", lstrlen(L"되돌리기"));
 			SetTextColor(memDC, RGB(0, 0, 0));
 			if (!imageOn)
 				SetTextColor(memDC, RGB(100, 100, 100));
 			TextOut(memDC, 26, 630, L"좌표 입력", lstrlen(L"좌표 입력"));
 		}
-		TextOut(memDC, 22 + 1 * 130, 630, L"되돌리기", lstrlen(L"되돌리기"));
+		
 		TextOut(memDC, 20 + 2 * 130, 630, L"초기화", lstrlen(L"초기화"));
 		TextOut(memDC, 6 + 3 * 130, 630, L"좌표 저장", lstrlen(L"좌표 저장"));
 
@@ -147,11 +157,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		for (int i = 0; i<pCount; i++)
 			r.AlphaBlend(memDC, p[i][0].x, p[i][0].y, p[i][1].x - p[i][0].x, p[i][1].y - p[i][0].y, 0, 0, r.GetWidth(), r.GetHeight(), 125, AC_SRC_OVER);
 
-		//{
-		//	WCHAR tmp[100];
-		//	wsprintf(tmp, L"%d %d %d %d %d", p[0][0].x, p[0][0].y, p[0][1].x, p[0][1].y, pCount);
-		//	TextOut(memDC, 500, 500, tmp, lstrlen(tmp));
-		//}
+		{
+			WCHAR tmp[100];
+			wsprintf(tmp, L"%d %d %d %d %d", p[0][0].x, p[0][0].y, p[0][1].x, p[0][1].y, pCount);
+			TextOut(memDC, 500, 500, tmp, lstrlen(tmp));
+		}
 		BitBlt(hDC, 0, 0, 1250, 750, memDC, 0, 0, SRCCOPY);
 		EndPaint(hWnd, &ps);
 		SelectObject(memDC, oldBrush);
@@ -161,7 +171,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DROPFILES:
 	{
-		WCHAR LoadText[512] = { 0 };
+		
 		HDROP hDrop = (HDROP)wParam;
 		DragQueryFile((HDROP)wParam, 0, LoadText, sizeof(wchar_t) * 512);
 
@@ -211,29 +221,67 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						else
 						{
 							edit = TRUE;
-							pCount = -1;
+							if (pCount == 0)
+							pCount--;
 						}
 					}
 					break;
 				case 1:
-					if (imageOn && !edit)
+					if (imageOn && edit)
 					{
-
+						if (pCount > 0)
+						{
+							pCount--;
+							p[pCount][0].x = 0;
+							p[pCount][0].y = 0;
+							p[pCount][1].x = 0;
+							p[pCount][1].y = 0;
+						}
 					}
 					break;
 				case 2:
 					if (imageOn && !edit)
 					{
+						pCount = 0;
+						for (int i = 0; i < 5; i++)
+						{
+							p[i][0].x = 0;
+							p[i][0].y = 0;
+							p[i][1].x = 0;
+							p[i][1].y = 0;
+						}
 					}
 					break;
 				case 3:
 					if (imageOn && !edit)
 					{
+						{
+							int findNULL;
+							for (int i = 0; i < 512; i++)
+							{
+								if (LoadText[i] == '\0')
+								{
+									findNULL = i;
+									break;
+								}
+							}
+							LoadText[findNULL - 3] = 't';
+							LoadText[findNULL - 2] = 'x';
+							LoadText[findNULL - 1] = 't';
+
+							dir.open(LoadText,std::ios_base::out);
+							dir << pCount << " ";
+							for (int i = 0; i < pCount; i++)
+								dir << p[i][0].x << " " << p[i][0].y << " " << p[i][1].x << " " << p[i][1].y << " ";
+							dir.close();
+						}
+
 					}
 					break;
 				case 4:
 					if (imageOn && !edit)
 					{
+						//NULL
 					}
 					break;
 				case 5:
@@ -262,7 +310,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (p[pCount][1].y < 10)
 				p[pCount][1].y = 10;
 
-			if (pCount < 5)
+			if (p[pCount][0].x > p[pCount][1].x || p[pCount][0].y > p[pCount][1].y)
+			{
+
+			}
+			else if (pCount < 5 && p[pCount][1].x > 10 && p[pCount][1].x < 610 && p[pCount][1].y > 10 && p[pCount][1].y < 610)
 				pCount++;
 		}
 		
