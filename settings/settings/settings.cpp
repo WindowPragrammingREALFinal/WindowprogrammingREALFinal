@@ -45,7 +45,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 CImage img;
 CImage imgg;
 CImage r;
-
+CImage e;
+CImage C_Check[2];
 std::ofstream dir;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
@@ -63,12 +64,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int mx = 0, my = 0;
 	static BOOL MouseOn[6] = {0};
 
+	static BOOL exhibit = FALSE;
+
 	static POINT p[5][2] = { 0 };
 	static int pCount = 0;
 	switch (iMessage) { 
 	case WM_CREATE:
 		DragAcceptFiles(hWnd, TRUE);
 		r.Load(L"r.jpg");
+		e.Load(L"e.png");
+		C_Check[0].Load(L"C_Check.png");
+		C_Check[1].Load(L"C_Check2.png");
 		break;
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
@@ -94,6 +100,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		RoundRect(memDC, 1137, 615, 1230, 660, 20, 20);
 		SelectObject(memDC, oldBrush);
 		DeleteObject(hBrush);
+
+		for (int i = 0; i < pCount; i++)
+		{
+			if (imageOn)
+				C_Check[0].Draw(memDC, 630 + i * 40, 612);
+		}
+		for (int i = pCount; i < 5; i++)
+		{
+			if (imageOn)
+				C_Check[1].Draw(memDC, 630 + i * 40, 612);
+		}
 
 		if (!img.IsNull())
 		{
@@ -157,11 +174,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		for (int i = 0; i<pCount; i++)
 			r.AlphaBlend(memDC, p[i][0].x, p[i][0].y, p[i][1].x - p[i][0].x, p[i][1].y - p[i][0].y, 0, 0, r.GetWidth(), r.GetHeight(), 125, AC_SRC_OVER);
 
-		{
+
+		if (exhibit)
+			e.Draw(memDC, 565, 615, 45, 45);
+		/*{
 			WCHAR tmp[100];
 			wsprintf(tmp, L"%d %d %d %d %d", p[0][0].x, p[0][0].y, p[0][1].x, p[0][1].y, pCount);
 			TextOut(memDC, 500, 500, tmp, lstrlen(tmp));
-		}
+		}*/
 		BitBlt(hDC, 0, 0, 1250, 750, memDC, 0, 0, SRCCOPY);
 		EndPaint(hWnd, &ps);
 		SelectObject(memDC, oldBrush);
@@ -221,8 +241,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						else
 						{
 							edit = TRUE;
-							if (pCount == 0)
-							pCount--;
+							//if (pCount == 0)
+							//pCount--;
 						}
 					}
 					break;
@@ -253,7 +273,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					break;
 				case 3:
-					if (imageOn && !edit)
+					if (imageOn && !edit && !exhibit)
 					{
 						{
 							int findNULL;
@@ -274,8 +294,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							for (int i = 0; i < pCount; i++)
 								dir << p[i][0].x << " " << p[i][0].y << " " << p[i][1].x << " " << p[i][1].y << " ";
 							dir.close();
+							MessageBox(hWnd, L"좌표를 성공적으로 저장했습니다.", L"save", NULL);
 						}
 
+					}
+					if (exhibit)
+					{
+						MessageBox(hWnd, L"좌표 저장에 실패했습니다.", L"error", NULL);
 					}
 					break;
 				case 4:
@@ -316,6 +341,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			else if (pCount < 5 && p[pCount][1].x > 10 && p[pCount][1].x < 610 && p[pCount][1].y > 10 && p[pCount][1].y < 610)
 				pCount++;
+		}
+		{
+			BOOL chk = FALSE;
+			for (int i = 0; i < pCount; i++)
+			{
+				for (int j = 0; j < i; j++)
+				{
+					RECT tmp1, tmp2;
+					RECT check;
+
+					tmp1.left = p[j][0].x;
+					tmp1.top = p[j][0].y;
+					tmp1.right = p[j][1].x;
+					tmp1.bottom = p[j][1].y;
+
+					tmp2.left = p[i][0].x;
+					tmp2.top = p[i][0].y;
+					tmp2.right = p[i][1].x;
+					tmp2.bottom = p[i][1].y;
+
+					if (IntersectRect(&check, &tmp1, &tmp2))
+					{
+						chk = TRUE;
+					}
+				}
+			}
+			if (chk)
+				exhibit = TRUE;
+			else
+				exhibit = FALSE;
 		}
 		
 		break;
