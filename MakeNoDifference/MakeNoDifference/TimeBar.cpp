@@ -1,10 +1,6 @@
 #include "TimeBar.h"
 
-void TimeBar(HDC memdc, int isTime, HINSTANCE g_hinst, int width, int height, int size)
+void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double height, double bottom, double size)
 {
-	HDC TimeBarDC = CreateCompatibleDC(memdc);
-	Rectangle(memdc, width - 25, (height + (100 - isTime) * 5), width + size + 25, 900 - 150);
-
-
-	DeleteDC(TimeBarDC);
+	Rectangle(memdc, width - 25, height + ((96 - isTime) * (double)(bottom - 100 - height) / 96) , width + size + 25, bottom - 100);
 }
