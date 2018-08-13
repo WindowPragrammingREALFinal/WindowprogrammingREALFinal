@@ -63,15 +63,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static double isTime = 96;
 	static int score = 0;
 	static int pictureNumber = 0;
+	static int aniCount = 1;
+	static int slideLeft = 0;
+	HPEN myPen;
+	HGDIOBJ oldPen;
 	PAINTSTRUCT ps;
 	DEVMODE dm;
 	HDC hdc, memdc;
 	HWND hDlg = NULL;
-
 	static RECT ClientRect;
 	static int correct = 0;
 	static int Life = 5;
+	static int openTime = 0;
 	static BOOL startPicture = TRUE;
+	static BOOL incorrect = FALSE;
+	static BOOL open = FALSE;
+	static BOOL ClickOn = TRUE;
 	static HBITMAP copyBit, oldcopyBit;
 	static HBRUSH hBrush, oldBrush;
 
@@ -87,7 +94,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Bottom = ClientRect.bottom;
 
 		pictureNumber = rand() % 4 + 1;
-		pictureNumber = 4;
 		SetTimer(hWnd, 1, 1, NULL);
 		break;
 
@@ -103,8 +109,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				KillTimer(hWnd, 2);
 			break;
 
-		case 3: // 화면전환 시험용
+		case 3: 
+			slideLeft += 50;
+			break;
 
+		case 4:
+			openTime++;
+			if(openTime == 3){
+				slideLeft = 0;
+				SetTimer(hWnd, 3, 1, NULL);
+				InvalidateRect(hWnd, NULL, FALSE);
+			}
 			break;
 		}
 		break;
@@ -126,18 +141,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 1) {
-			if (checkDifference(clickX, clickY, correct, ClientRect.right)) {
-				correct++;
-				score += 10;
+			if (((clickX >= ClientRect.left + 50 && clickX <= ClientRect.left + 50 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 150 && clickY <= ClientRect.top + (ClientRect.right / 2 - 100)) ||
+				(clickX >= ClientRect.right / 2 + 50 && clickX <= ClientRect.right / 2 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 150 && clickY <= ClientRect.top + (ClientRect.right / 2 - 100))) && ClickOn == TRUE) {
+				if (checkDifference(clickX, clickY, correct, ClientRect.right)) {
+					correct++;
+					score += 10;
+					if (correct == 5) {
+						slideLeft = 0;
+						ClickOn = FALSE;
+						SetTimer(hWnd, 3, 1, NULL);
+						
+					}
+				}
+				else {
+					incorrect = TRUE;
+					aniCount = 1;
+					Life--;
+				}
 			}
-			else
-				Life--;
 		}
 
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
+
+		myPen = CreatePen(PS_NULL, 0, RGB(255, 255, 255));
+		oldPen = SelectObject(memdc, myPen);
 
 		copyBit = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
 		oldcopyBit = (HBITMAP)SelectObject(memdc, copyBit);
@@ -160,11 +190,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				correctAnimation(memdc, correct, g_hinst, ClientRect.right);
 			}
 
-			if (correct == 5) {
-				pictureNumber = rand() % 4 + 1;
-				correct = 0;
-				score += 50;
-				LoadDifferenctPosition(pictureNumber, hWnd);
+			if (incorrect == TRUE) {
+				if (aniCount == 9) {
+					aniCount = 1;
+					incorrect = FALSE;
+				}
+				else {
+					xAnimation(memdc, clickX, clickY, aniCount);
+					aniCount++;
+				}
+			}
+
+			if (correct == 5 && open == FALSE) {
+				KillTimer(hWnd, 2);
+				if (screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right)) {
+					pictureNumber = rand() % 4 + 1;
+					correct = 0;
+					score += 50;
+					LoadDifferenctPosition(pictureNumber, hWnd);
+					open = TRUE;
+					openTime = 0;
+					KillTimer(hWnd, 3);
+					SetTimer(hWnd, 4, 1000, NULL);
+				}
+			}
+
+			if (open == TRUE) {
+				if (openTime > 2) {
+					if (openScreenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right) ) {
+						SetTimer(hWnd, 2, 1000, NULL);
+						open = FALSE;
+						KillTimer(hWnd, 3);
+						ClickOn = TRUE;
+					}
+				}
+				else 
+					screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right);
 			}
 		}
 
@@ -174,9 +235,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		BitBlt(hdc, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, memdc, 0, 0, SRCCOPY);
 
-		DeleteObject(hBrush);
+		DeleteObject(hBrush); 
 		DeleteObject(oldBrush);
 		DeleteDC(memdc);
+		DeleteObject(myPen);
+		DeleteObject(oldPen);
 		DeleteObject(copyBit);
 		DeleteObject(oldcopyBit);
 		

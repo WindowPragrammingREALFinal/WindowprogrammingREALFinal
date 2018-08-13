@@ -7,3 +7,5 @@ void LoadDifferenctPosition(int root, HWND hWnd);
 BOOL checkDifference(int x, int y, int correct, int right);
 
 void correctAnimation(HDC memdc, int correct, HINSTANCE g_hinst, int right);
+
+void xAnimation(HDC memdc, int x, int y, int aniCount);

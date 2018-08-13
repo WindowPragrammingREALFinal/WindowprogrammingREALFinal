@@ -74,6 +74,17 @@ void correctAnimation(HDC memdc, int correct, HINSTANCE g_hinst, int right) // Æ
 	}
 }
 
+void xAnimation(HDC memdc, int x, int y, int aniCount)
+{
+	CImage X;
+	WCHAR LoadText[1000];
+
+	wsprintf(LoadText, L"C_NO\\C_NO_%d.png", aniCount);
+	X.Load(LoadText);
+	X.Draw(memdc, x - 23, y - 23, 46, 46, 0, 0, 128, 128);
+	X.Destroy();
+}
+
 double LengthCheck(double mx, double my, double x, double y)
 {
 	return sqrt((mx - x)*(mx - x) + (my - y)*(my - y));
