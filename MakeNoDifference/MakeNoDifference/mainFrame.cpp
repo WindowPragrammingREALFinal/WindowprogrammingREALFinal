@@ -5,7 +5,11 @@
 #include "ImageLoad.h"
 #include "LoadDifferencePosition.h"
 #include "UI.h"
+#include "shutdown.h"
 #define PI 3.141592654 
+#define ExitWindows(dwReserved, Code) ExitWindowsEx(EWX_LOGOFF, 0xFFFFFFFF)
+
+
 
 HPEN MyPen, OldPen;
 
@@ -13,7 +17,6 @@ HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Make No Difference!";
 HINSTANCE g_hinst;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -134,6 +137,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		clickY = HIWORD(lParam);
 		if (nowDisplay == 0) {
 			if (clickX >= 0 && clickX < 50 && clickY > 0 && clickY < 50) {
+		//		ShutdownSystem(ShutdownTimeout, L"시스템을 종료합니다.", 128, TRUE, FALSE); -> 키면 좆됨
 				nowDisplay = 1;
 				LoadDifferenctPosition(pictureNumber, hWnd);
 				SetTimer(hWnd, 2, 1000, NULL);
@@ -247,6 +251,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_DESTROY:
+		
 		PostQuitMessage(0);
 		return 0;
 	}
