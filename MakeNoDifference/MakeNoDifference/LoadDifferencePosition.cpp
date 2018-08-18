@@ -1,5 +1,6 @@
 #include "LoadDifferencePosition.h"
-
+#include <fstream>
+#include <iostream>
 
 
 typedef struct _correctPos {
@@ -13,18 +14,40 @@ typedef struct _correctPos {
 
 static correctPos Load[5];
 
-void LoadDifferenctPosition(int root, HWND hWnd) // 그림을 로드시에 메모장에서 틀린부분 좌표를 로드
+void LoadDifferenctPosition(int pNumber, HWND hWnd) // 그림을 로드시에 메모장에서 틀린부분 좌표를 로드
 {
-	for (int i = 0; i < 5; ++i) { // 이곳이 파일에서 좌표들을 불러와 저장하는곳
-		Load[i].StartPosition.x = i * 100;
-		Load[i].StartPosition.y = i * 100;
-		Load[i].EndPosition.x = (i + 1) * 100;
-		Load[i].EndPosition.y = (i + 1) * 100;
-		Load[i].size[i] = 25;
-		Load[i].animation = FALSE;
-		Load[i].animationCount = 1;
-	}
+	WCHAR LoadText[1000];
+	std::ifstream dir;
 
+	wsprintf(LoadText, L"IMG_03_00\\Stage%d\\IMG_0%d_01.txt", pNumber, pNumber);
+	{
+		int tmp;
+		RECT ClientRECT;
+		dir.open(LoadText, std::ios_base::in);
+		dir >> tmp;
+		GetClientRect(hWnd, &ClientRECT);
+		for (int i = 0; i < tmp; i++)
+		{
+			int x, y, dx, dy;
+			dir >> x >> y >> dx >> dy;
+			Load[i].StartPosition.x = x * (ClientRECT.right / 2 - 100) / 600;
+			Load[i].StartPosition.y = y * (ClientRECT.right / 2 - 100) / 600;
+			Load[i].EndPosition.x = dx * (ClientRECT.right / 2 - 100) / 600;
+			Load[i].EndPosition.y = dy * (ClientRECT.right / 2 - 100) / 600;
+			//wsprintf(LoadText, L"%s %d %d %d %d", LoadText,x,y,dx,dy);
+		}
+		dir.close();
+		//MessageBox(hWnd, LoadText, NULL, NULL);
+	}
+	//for (int i = 0; i < 5; ++i) { // 이곳이 파일에서 좌표들을 불러와 저장하는곳
+	//	Load[i].StartPosition.x = i * 100;
+	//	Load[i].StartPosition.y = i * 100;
+	//	Load[i].EndPosition.x = (i + 1) * 100;
+	//	Load[i].EndPosition.y = (i + 1) * 100;
+	//	Load[i].size[i] = 25;
+	//	Load[i].animation = FALSE;
+	//	Load[i].animationCount = 1;
+	//}
 	// 이부분에서 position[i].x, position[i].y 에 좌표를 불러와 주세요!
 
 

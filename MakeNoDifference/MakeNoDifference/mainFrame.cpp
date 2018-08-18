@@ -246,8 +246,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 1) {
-			if (((clickX >= ClientRect.left + 50 && clickX <= ClientRect.left + 50 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 150 && clickY <= ClientRect.top + (ClientRect.right / 2 - 100)) ||
-				(clickX >= ClientRect.right / 2 + 50 && clickX <= ClientRect.right / 2 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 150 && clickY <= ClientRect.top + (ClientRect.right / 2 - 100))) && ClickOn == TRUE) {
+			if (((clickX >= ClientRect.left + 50 && clickX <= ClientRect.left + 50 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 150 && clickY <= ClientRect.top + 150 + (ClientRect.right / 2 - 100)) ||
+				(clickX >= ClientRect.right / 2 + 50 && clickX <= ClientRect.right / 2 + 50 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 150 && clickY <= ClientRect.top + 150 + (ClientRect.right / 2 - 100))) && ClickOn == TRUE){
 				if (checkDifference(clickX, clickY, correct, ClientRect.right)) {
 					correct++;
 					score += 10;

@@ -292,7 +292,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							dir.open(LoadText,std::ios_base::out);
 							dir << pCount << " ";
 							for (int i = 0; i < pCount; i++)
-								dir << p[i][0].x << " " << p[i][0].y << " " << p[i][1].x << " " << p[i][1].y << " ";
+								dir << p[i][0].x -10 << " " << p[i][0].y -10 << " " << p[i][1].x - 10 << " " << p[i][1].y - 10 << " ";
 							dir.close();
 							MessageBox(hWnd, L"좌표를 성공적으로 저장했습니다.", L"save", NULL);
 						}
