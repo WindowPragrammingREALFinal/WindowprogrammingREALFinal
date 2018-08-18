@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="ImageLoad.cpp" />
     <ClCompile Include="LoadDifferencePosition.cpp" />
+    <ClCompile Include="login.cpp" />
     <ClCompile Include="mainFrame.cpp" />
     <ClCompile Include="shutdown.cpp" />
     <ClCompile Include="TimeBar.cpp" />
@@ -149,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="ImageLoad.h" />
     <ClInclude Include="LoadDifferencePosition.h" />
+    <ClInclude Include="login.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="shutdown.h" />
     <ClInclude Include="TimeBar.h" />
