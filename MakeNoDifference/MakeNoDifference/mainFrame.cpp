@@ -156,7 +156,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		
 
 
-		pictureNumber = rand() % 4 + 1;
+		pictureNumber = rand() % 5 + 1;
 		
 		break;
 
@@ -302,6 +302,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 
 			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber);
+			remain(memdc, correct, hWnd);
 			Health(memdc, Life);
 			//===============고양이 보여용==================
 			if (egg == TRUE) {
@@ -330,7 +331,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
 				if (screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right)) {
-					pictureNumber = rand() % 4 + 1;
+					pictureNumber = rand() % 5 + 1;
 					correct = 0;
 					score += 50;
 					LoadDifferenctPosition(pictureNumber, hWnd);
@@ -353,6 +354,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				else 
 					screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right);
 			}
+			SetBkColor(memdc, RGB(255, 255, 255));
 			wsprintf((LPWSTR)totalScore, TEXT("%d"), score);
 			TextOut(memdc, ClientRect.right - 100, ClientRect.top + 5, (LPWSTR)totalScore, 1000);
 

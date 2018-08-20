@@ -4,12 +4,13 @@
 
 
 typedef struct _correctPos {
-	POINT StartPosition = { 0 , 0 };//임시 좌표 설정
-	POINT EndPosition = { 100, 100 };
+	POINT StartPosition;//임시 좌표 설정
+	POINT EndPosition;
 	POINT saveCorrectPosition; // 틀린거 맞출경우 좌표 세이브
 	int size[5];
 	int animationCount = 1;
 	BOOL animation = FALSE;
+	BOOL check = FALSE;
 }correctPos;
 
 static correctPos Load[5];
@@ -30,24 +31,18 @@ void LoadDifferenctPosition(int pNumber, HWND hWnd) // 그림을 로드시에 메모장에�
 		{
 			int x, y, dx, dy;
 			dir >> x >> y >> dx >> dy;
-			Load[i].StartPosition.x = x * (ClientRECT.right / 2 - 100) / 600;
-			Load[i].StartPosition.y = y * (ClientRECT.right / 2 - 100) / 600;
-			Load[i].EndPosition.x = dx * (ClientRECT.right / 2 - 100) / 600;
-			Load[i].EndPosition.y = dy * (ClientRECT.right / 2 - 100) / 600;
+			Load[i].StartPosition.x = (x * (ClientRECT.right / 2 - 100) / 600);
+			Load[i].StartPosition.y = (y * (ClientRECT.right / 2 - 100) / 600);
+			Load[i].EndPosition.x = (dx * (ClientRECT.right / 2 - 100) / 600);
+			Load[i].EndPosition.y = (dy * (ClientRECT.right / 2 - 100) / 600);
+			Load[i].animationCount = 1;
+			Load[i].animation = FALSE;
+			Load[i].check = FALSE;
 			//wsprintf(LoadText, L"%s %d %d %d %d", LoadText,x,y,dx,dy);
 		}
 		dir.close();
 		//MessageBox(hWnd, LoadText, NULL, NULL);
 	}
-	//for (int i = 0; i < 5; ++i) { // 이곳이 파일에서 좌표들을 불러와 저장하는곳
-	//	Load[i].StartPosition.x = i * 100;
-	//	Load[i].StartPosition.y = i * 100;
-	//	Load[i].EndPosition.x = (i + 1) * 100;
-	//	Load[i].EndPosition.y = (i + 1) * 100;
-	//	Load[i].size[i] = 25;
-	//	Load[i].animation = FALSE;
-	//	Load[i].animationCount = 1;
-	//}
 	// 이부분에서 position[i].x, position[i].y 에 좌표를 불러와 주세요!
 
 
@@ -128,30 +123,20 @@ BOOL InCircle(double mx, double my, double x, double y, double r)
 BOOL checkDifference(int x, int y, int correct, int right) // 클릭 좌표가 틀린위치인지를 확인
 {
 	BOOL check = FALSE;
-	for (int i = 0; i < 5 - correct; ++i) {
-		if (x >= Load[i].StartPosition.x + 50 && x <= Load[i].EndPosition.x + 50 && y >= Load[i].StartPosition.y + 150 && y <= Load[i].EndPosition.y + 150) {
+	for (int i = 0; i < 5; ++i) {
+		if (x >= Load[i].StartPosition.x + 50 && x <= Load[i].EndPosition.x + 50 && y >= Load[i].StartPosition.y + 150 && y <= Load[i].EndPosition.y + 150 && Load[i].check == FALSE) {
 			Load[correct].saveCorrectPosition.x = x;
 			Load[correct].saveCorrectPosition.y = y;
-			for (int j = i; j < 5 - correct; ++j) {
-				Load[j].StartPosition.x = Load[j + 1].StartPosition.x;
-				Load[j].StartPosition.y = Load[j + 1].StartPosition.y;
-				Load[j].EndPosition.x = Load[j + 1].EndPosition.x;
-				Load[j].EndPosition.y = Load[j + 1].EndPosition.y;
-			}
+			Load[i].check = TRUE;
 			check = TRUE;
 			break;
 		}
-		else if (x >= Load[i].StartPosition.x + right / 2 + 50 && x <= Load[i].EndPosition.x + right / 2 + 50 && y >= Load[i].StartPosition.y + 150 && y <= Load[i].EndPosition.y + 150) {
+		else if (x >= Load[i].StartPosition.x + right / 2 + 50 && x <= Load[i].EndPosition.x + right / 2 + 50 && y >= Load[i].StartPosition.y + 150 && y <= Load[i].EndPosition.y + 150 && Load[i].check == FALSE) {
 			Load[correct].saveCorrectPosition.x = x;
 			Load[correct].saveCorrectPosition.y = y;
-			for (int j = i; j < 5 - correct; ++j) {
-				Load[j].StartPosition.x = Load[j + 1].StartPosition.x;
-				Load[j].StartPosition.y = Load[j + 1].StartPosition.y;
-				Load[j].EndPosition.x = Load[j + 1].EndPosition.x;
-				Load[j].EndPosition.y = Load[j + 1].EndPosition.y;
-				check = TRUE;
-				break;
-			}
+			Load[i].check = TRUE;
+			check = TRUE;
+			break;
 		}
 	}
 	if (check == TRUE)

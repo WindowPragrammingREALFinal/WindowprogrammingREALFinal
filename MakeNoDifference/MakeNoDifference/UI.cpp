@@ -238,6 +238,61 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 	return check;
 }
 
+void remain(HDC memdc, int correct, HWND hWnd)
+{
+	RECT ClientRECT;
+	static char difference[1000];
+	GetClientRect(hWnd, &ClientRECT);
+	HBRUSH hBrush, oldBrush;
+
+	POINT left[3];
+	POINT center[4];
+	POINT right[3];
+
+	center[0].x = ClientRECT.right / 2 - 50;
+	center[0].y = ClientRECT.top + 52;
+	center[1].x = ClientRECT.right / 2;
+	center[1].y = ClientRECT.top + 2;
+	center[2].x = ClientRECT.right / 2 + 50;
+	center[2].y = ClientRECT.top + 52;
+	center[3].x = ClientRECT.right / 2;
+	center[3].y = ClientRECT.top + 102;
+
+	left[0].x = ClientRECT.right / 2 - 100;
+	left[0].y = ClientRECT.top;
+	left[1].x = ClientRECT.right / 2 - 50;
+	left[1].y = ClientRECT.top + 50;
+	left[2].x = ClientRECT.right / 2 ;
+	left[2].y = ClientRECT.top;
+
+	right[0].x = ClientRECT.right / 2;
+	right[0].y = ClientRECT.top;
+	right[1].x = ClientRECT.right / 2 + 50;
+	right[1].y = ClientRECT.top + 50;
+	right[2].x = ClientRECT.right / 2 + 100;
+	right[2].y = ClientRECT.top;
+
+	hBrush = CreateSolidBrush(RGB(255, 0, 0));
+	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	Polygon(memdc, left, 3);
+	
+	hBrush = CreateSolidBrush(RGB(255, 155, 0));
+	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	Polygon(memdc, center, 4);
+	
+	hBrush = CreateSolidBrush(RGB(255, 0, 0));
+	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	Polygon(memdc, right, 3);
+
+	wsprintf((LPWSTR)difference, TEXT("%d"), 5 - correct);
+	SetBkColor(memdc, RGB(255, 155, 0));
+	TextOut(memdc, ClientRECT.right / 2 - 15, ClientRECT.top + 30, (LPWSTR)difference ,1);
+
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
+}
+
+
 void setting()
 {
 	// Æó±â ¿¹Á¤

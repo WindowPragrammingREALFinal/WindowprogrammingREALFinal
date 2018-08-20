@@ -9,3 +9,5 @@ void Result(HDC memdc, int score);
 BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight);
 
 BOOL openScreenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight);
+
+void remain(HDC memdc, int correct, HWND hWnd);
