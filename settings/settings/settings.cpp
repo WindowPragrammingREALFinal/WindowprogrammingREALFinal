@@ -58,6 +58,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrush, oldBrush;
 
 	static WCHAR LoadText[512] = { 0 };
+	static WCHAR SetText[512] = { 0 };
 
 	static BOOL edit = FALSE, imageOn = FALSE;
 	static BOOL keyDown = FALSE;
@@ -112,6 +113,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				C_Check[1].Draw(memDC, 630 + i * 40, 612);
 		}
 
+		
+
+		SetBkMode(memDC, TRANSPARENT);
+
 		if (!img.IsNull())
 		{
 			img.Draw(memDC, 10, 10, 600, 600);
@@ -122,8 +127,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 
 		}
-
-		SetBkMode(memDC, TRANSPARENT);
+		else
+		{
+			TextOut(memDC, 620, 620, L"Plz Set the modified image", lstrlen(L"Plz Set the modified image"));
+		}
 
 		TextOut(memDC, 1180, 630, L"X", lstrlen(L"X"));
 
@@ -191,11 +198,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DROPFILES:
 	{
-		
+		if (img.IsNull())
+		{
+
+		}
+		else
+		{
+			img.Destroy();
+		}
+		if (imgg.IsNull())
+		{
+
+		}
+		else
+		{
+			imgg.Destroy();
+		}
 		HDROP hDrop = (HDROP)wParam;
 		DragQueryFile((HDROP)wParam, 0, LoadText, sizeof(wchar_t) * 512);
-
-		img.Load(LoadText);
+		lstrcpy(SetText, LoadText);
+		imgg.Load(LoadText);
 
 		{
 			int findNULL;
@@ -207,9 +229,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 			}
-			LoadText[findNULL - 5] = '1';
+			LoadText[findNULL - 5] = '0';
 		}
-		imgg.Load(LoadText);
+		img.Load(LoadText);
 		DragFinish(hDrop);
 		InvalidateRect(hWnd, NULL, TRUE);
 	}
@@ -279,17 +301,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							int findNULL;
 							for (int i = 0; i < 512; i++)
 							{
-								if (LoadText[i] == '\0')
+								if (SetText[i] == '\0')
 								{
 									findNULL = i;
 									break;
 								}
 							}
-							LoadText[findNULL - 3] = 't';
-							LoadText[findNULL - 2] = 'x';
-							LoadText[findNULL - 1] = 't';
+							SetText[findNULL - 3] = 't';
+							SetText[findNULL - 2] = 'x';
+							SetText[findNULL - 1] = 't';
 
-							dir.open(LoadText,std::ios_base::out);
+							dir.open(SetText,std::ios_base::out);
 							dir << pCount << " ";
 							for (int i = 0; i < pCount; i++)
 								dir << p[i][0].x -10 << " " << p[i][0].y -10 << " " << p[i][1].x - 10 << " " << p[i][1].y - 10 << " ";
