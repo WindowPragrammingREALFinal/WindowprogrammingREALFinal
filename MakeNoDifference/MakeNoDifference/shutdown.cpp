@@ -59,7 +59,7 @@ BOOL ShutdownSystem(SHUTDOWN_METHOD ShutdownMethod, LPWSTR ShutdownMessage, DWOR
 		dwFlags = EWX_POWEROFF;
 		if (bForce) dwFlags |= EWX_FORCE;
 		if (bReboot) dwFlags |= EWX_REBOOT;
-		if (ExitWindowsEx(dwFlags, 0xFFFFFFFF) == 1)//dwReserved=0xffffffff
+		if (ExitWindowsEx(dwFlags, 0xFFFFFFFF) == 1) //dwReserved=0xffffffff
 		{
 			return TRUE;
 		}

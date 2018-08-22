@@ -67,7 +67,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 LRESULT CALLBACK ChildProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	PAINTSTRUCT ps;
-	HBITMAP Block[7];
 	static HBITMAP hbit, oldBit1, oldBit2;;
 
 	static int sizeX, sizeY;
@@ -99,6 +98,15 @@ static int Left, Right, Top, Bottom;
 
 static int nowDisplay = 0; //어떤 화면을 표시하고 있을지를 결정
 
+struct timeBarRGB {
+	int r = 150;
+	int g = 50;
+	int b = 10;
+
+	BOOL Rbool = FALSE;
+	BOOL Gbool = FALSE;
+	BOOL Bbool = FALSE;
+};
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) 
 {
 	static double isTime = 96;
@@ -106,6 +114,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int pictureNumber = 0;
 	static int aniCount = 1;
 	static int slideLeft = 0;
+
+	static COLORREF timeRGB;
+	static timeBarRGB rgb;
+	
 	HPEN myPen;
 	HGDIOBJ oldPen;
 	PAINTSTRUCT ps;
@@ -163,6 +175,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		switch (wParam) {
 		case 1:
+			if (rgb.Rbool == FALSE) {
+				rgb.r += 4;
+				if (rgb.r >= 186)
+					rgb.Rbool = TRUE;
+			}
+			else if (rgb.Rbool == TRUE) {
+				rgb.r -= 4;
+				if (rgb.r <= 69)
+					rgb.Rbool = FALSE;
+			}
+
+			if (rgb.Gbool == FALSE) {
+				rgb.g += 2;
+				if (rgb.g >=188)
+					rgb.Gbool = TRUE;
+			}
+			else if (rgb.Gbool == TRUE) {
+				rgb.g -= 2;
+				if (rgb.g <= 67)
+					rgb.Gbool = FALSE;
+			}
+
+			if (rgb.Bbool == FALSE) {
+				rgb.b += 1;
+				if (rgb.b >= 190)
+					rgb.Bbool = TRUE;
+			}
+			else if (rgb.Bbool == TRUE) {
+				rgb.b -= 1;
+				if (rgb.b <= 66)
+					rgb.Bbool = FALSE;
+			}
+			
+			timeRGB = RGB(rgb.r, rgb.g, rgb.b);
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
@@ -224,9 +270,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				egg = FALSE;
 		}
 
-		else if (wParam == 'Q') {
+		/*else if (wParam == 'Q') {
 			ShutdownSystem(ShutdownTimeout, L"시스템을 종료합니다.", 128, TRUE, FALSE);
-		}
+		}*/
 		break;
 
 	case WM_LBUTTONUP:
@@ -270,12 +316,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
-
+	//	SetTextAlign(memdc, TA_CENTER);
 		hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("궁서"));
 		hOldFont = (HFONT)SelectObject(memdc, hFont);
 
 
-
+		
 
 
 		myPen = CreatePen(PS_NULL, 0, RGB(255, 255, 255));
@@ -284,7 +330,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		copyBit = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
 		oldcopyBit = (HBITMAP)SelectObject(memdc, copyBit);
 		PatBlt(memdc, 0, 0, ClientRect.right, ClientRect.bottom, WHITENESS);
-
+		
 		if(nowDisplay == 0){
 		
 		}
@@ -293,10 +339,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(confirm);
 			DestroyWindow(NameList);
 			DestroyWindow(StudentNumberList);
-
 			hBrush = CreateSolidBrush(RGB(50, 100, 153));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 150, ClientRect.bottom, timerWidthSize, ClientRect.right / 2);
+			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 150, ClientRect.bottom, timerWidthSize, ClientRect.right / 2, hWnd, timeRGB);
 		
 			hBrush = CreateSolidBrush(RGB(255, 155, 0));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
@@ -327,7 +372,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					aniCount++;
 				}
 			}
-
+			
+			hBrush = CreateSolidBrush(RGB(255, 155, 0));
+			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
 				if (screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right)) {
@@ -341,7 +388,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					SetTimer(hWnd, 4, 1000, NULL);
 				}
 			}
-
+			
 			if (open == TRUE) {
 				if (openTime >= 2) {
 					if (openScreenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right) ) {
@@ -356,7 +403,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			SetBkColor(memdc, RGB(255, 255, 255));
 			wsprintf((LPWSTR)totalScore, TEXT("%d"), score);
-			TextOut(memdc, ClientRect.right - 100, ClientRect.top + 5, (LPWSTR)totalScore, 1000);
+			
+			TextOut(memdc, ClientRect.right - 100, ClientRect.top + 50, (LPWSTR)totalScore, 3);
+			
 
 			SelectObject(memdc, hOldFont);
 		}
