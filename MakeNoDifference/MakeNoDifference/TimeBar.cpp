@@ -18,8 +18,8 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	TRIVERTEX vert[2], vert2[2];
 	GRADIENT_RECT gtr, gtr2;
 
-	vert[0].x = half - 15;
-	vert[0].y = height + ((96 - isTime) * (double)(half - 100) / 96);
+	vert[0].x = half - 50;
+	vert[0].y = 135 + ((96 - isTime) * (double)(half - 100) / 96);
 
 	// 그라데이션의 시작색상을 명시한다.
 	//vert[0].Red = 0xFFFFFF;
@@ -33,8 +33,9 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	vert[0].Alpha = 255 << 8;
 
 	// 그라데이션의 끝좌표를 명시한다.
-	vert[1].x = half + 15;
-	vert[1].y = height + half - 100;
+	vert[1].x = half + 50;
+	//vert[1].y = height + half - 100;
+	vert[1].y = (ClientRECT.right / 2 - 100) + 135;
 
 	// 그라데이션의 끝색상를 명시한다.
 	vert[1].Red = GetRValue(rgb) << 8;
@@ -51,7 +52,7 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 
 
 	vert2[0].x = ClientRECT.left;
-	vert2[0].y = ClientRECT.top + (ClientRECT.right / 2 - 100) + 150;
+	vert2[0].y = ClientRECT.top + (ClientRECT.right / 2 - 100) + 135;
 
 	// 그라데이션의 끝색상를 명시한다.
 	vert2[0].Red = GetRValue(rgb) << 8;
@@ -75,22 +76,22 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 //=====================================================================================================================
 	//voezNote.Draw(memdc, half - 50, 150, 100, half - 100, 0, 0, 43, 250);
 	time[0].x = half - 25;
-	time[0].y = height + ((96 - isTime) * (double)(half - 100) / 96);
+	time[0].y = 135 + ((96 - isTime) * (double)(half - 100) / 96);
 	time[1].x = half;
-	time[1].y = height + ((96 - isTime) * (double)(half - 100) / 96) - 25;
+	time[1].y = 135 + ((96 - isTime) * (double)(half - 100) / 96) - 25;
 	time[2].x = half + 25;
-	time[2].y = height + ((96 - isTime) * (double)(half - 100) / 96);
+	time[2].y = 135 + ((96 - isTime) * (double)(half - 100) / 96);
 	time[3].x = half;
-	time[3].y = height + ((96 - isTime) * (double)(half - 100) / 96) + 25;
+	time[3].y = 135 + ((96 - isTime) * (double)(half - 100) / 96) + 25;
 
 	voez[0].x = half - 20;
-	voez[0].y = height + ((96 - isTime) * (double)(half - 100) / 96);
+	voez[0].y = 135 + ((96 - isTime) * (double)(half - 100) / 96);
 	voez[1].x = half;
-	voez[1].y = height + ((96 - isTime) * (double)(half - 100) / 96) - 20;
+	voez[1].y = 135 + ((96 - isTime) * (double)(half - 100) / 96) - 20;
 	voez[2].x = half + 20;
-	voez[2].y = height + ((96 - isTime) * (double)(half - 100) / 96);
+	voez[2].y = 135 + ((96 - isTime) * (double)(half - 100) / 96);
 	voez[3].x = half;
-	voez[3].y = height + ((96 - isTime) * (double)(half - 100) / 96) + 20;
+	voez[3].y = 135 + ((96 - isTime) * (double)(half - 100) / 96) + 20;
 
 	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);

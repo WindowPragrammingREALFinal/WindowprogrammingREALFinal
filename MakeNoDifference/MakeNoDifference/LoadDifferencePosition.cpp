@@ -41,7 +41,6 @@ void LoadDifferenctPosition(int pNumber, HWND hWnd) // ±×¸²À» ·Îµå½Ã¿¡ ¸Þ¸ðÀå¿¡¼
 			//wsprintf(LoadText, L"%s %d %d %d %d", LoadText,x,y,dx,dy);
 		}
 		dir.close();
-		//MessageBox(hWnd, LoadText, NULL, NULL);
 	}
 	// ÀÌºÎºÐ¿¡¼­ position[i].x, position[i].y ¿¡ ÁÂÇ¥¸¦ ºÒ·¯¿Í ÁÖ¼¼¿ä!
 
@@ -58,22 +57,22 @@ void correctAnimation(HDC memdc, int correct, HINSTANCE g_hinst, int right) // Æ
 		if (Load[i].saveCorrectPosition.x < right / 2 && Load[i].animation == TRUE) {
 			wsprintf(LoadText, L"C_BUTTON\\C_Button.png");
 			CorrectFoot[i].Load(LoadText);
-			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
-			CorrectFoot[i].Draw(memdc, (right / 2) + 50 + (Load[i].saveCorrectPosition.x - 50) - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, (right / 2) + 50 + (Load[i].saveCorrectPosition.x - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Destroy();
 		}
 		else if(Load[i].saveCorrectPosition.x > right / 2 && Load[i].animation == TRUE) {
 			wsprintf(LoadText, L"C_BUTTON\\C_Button.png");
 			CorrectFoot[i].Load(LoadText);
-			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
-			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 50 - (right / 2 - 50) - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 50 - (right / 2 - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Destroy();
 		}
 		else if (Load[i].saveCorrectPosition.x < right / 2 && Load[i].animation == FALSE) {
 			wsprintf(LoadText, L"Collect_E\\C_Button2_%d.png", Load[i].animationCount);
 			CorrectFoot[i].Load(LoadText);
-			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
-			CorrectFoot[i].Draw(memdc, (right / 2) + 50 + (Load[i].saveCorrectPosition.x - 50) - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, (right / 2) + 50 + (Load[i].saveCorrectPosition.x - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Destroy();
 			Load[i].animationCount++;
 			if (Load[i].animationCount == 9)
@@ -82,8 +81,8 @@ void correctAnimation(HDC memdc, int correct, HINSTANCE g_hinst, int right) // Æ
 		else if (Load[i].saveCorrectPosition.x > right / 2 && Load[i].animation == FALSE) {
 			wsprintf(LoadText, L"Collect_E\\C_Button2_%d.png", Load[i].animationCount);
 			CorrectFoot[i].Load(LoadText);
-			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
-			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 50 - (right / 2 - 50) - 23, Load[i].saveCorrectPosition.y - 23, 46, 46, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
+			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 50 - (right / 2 - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Destroy();
 			Load[i].animationCount++;
 			if (Load[i].animationCount == 9)
@@ -99,7 +98,7 @@ void xAnimation(HDC memdc, int x, int y, int aniCount)
 
 	wsprintf(LoadText, L"C_NO\\C_NO_%d.png", aniCount);
 	X.Load(LoadText);
-	X.Draw(memdc, x - 23, y - 23, 46, 46, 0, 0, 128, 128);
+	X.Draw(memdc, x - 45, y - 45, 90, 90, 0, 0, 128, 128);
 	X.Destroy();
 }
 
@@ -124,14 +123,14 @@ BOOL checkDifference(int x, int y, int correct, int right) // Å¬¸¯ ÁÂÇ¥°¡ Æ²¸°À§
 {
 	BOOL check = FALSE;
 	for (int i = 0; i < 5; ++i) {
-		if (x >= Load[i].StartPosition.x + 50 && x <= Load[i].EndPosition.x + 50 && y >= Load[i].StartPosition.y + 150 && y <= Load[i].EndPosition.y + 150 && Load[i].check == FALSE) {
+		if (x >= Load[i].StartPosition.x + 50 && x <= Load[i].EndPosition.x + 50 && y >= Load[i].StartPosition.y + 135 && y <= Load[i].EndPosition.y + 135 && Load[i].check == FALSE) {
 			Load[correct].saveCorrectPosition.x = x;
 			Load[correct].saveCorrectPosition.y = y;
 			Load[i].check = TRUE;
 			check = TRUE;
 			break;
 		}
-		else if (x >= Load[i].StartPosition.x + right / 2 + 50 && x <= Load[i].EndPosition.x + right / 2 + 50 && y >= Load[i].StartPosition.y + 150 && y <= Load[i].EndPosition.y + 150 && Load[i].check == FALSE) {
+		else if (x >= Load[i].StartPosition.x + right / 2 + 50 && x <= Load[i].EndPosition.x + right / 2 + 50 && y >= Load[i].StartPosition.y + 135 && y <= Load[i].EndPosition.y + 135 && Load[i].check == FALSE) {
 			Load[correct].saveCorrectPosition.x = x;
 			Load[correct].saveCorrectPosition.y = y;
 			Load[i].check = TRUE;

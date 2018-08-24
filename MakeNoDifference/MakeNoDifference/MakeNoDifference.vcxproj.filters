@@ -27,13 +27,13 @@
     <ClCompile Include="LoadDifferencePosition.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="shutdown.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="login.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
