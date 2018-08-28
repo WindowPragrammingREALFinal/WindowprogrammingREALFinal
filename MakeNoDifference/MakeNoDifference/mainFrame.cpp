@@ -7,6 +7,7 @@
 #include "LoadDifferencePosition.h"
 #include "UI.h"
 #include "shutdown.h"
+#include <math.h>
 
 #define PI 3.141592654 
 #define ExitWindows(dwReserved, Code) ExitWindowsEx(EWX_LOGOFF, 0xFFFFFFFF)
@@ -130,6 +131,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int pictureNumber = 0;
 	static int aniCount = 1;
 	static int slideLeft = 0;
+	static int scoreAnimationCount = 3;
+	static double acc = 1;
 	static BOOL chil = FALSE;
 	
 	static int nowCount = 0;
@@ -148,7 +151,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HPEN myPen;
 	HGDIOBJ oldPen;
 	PAINTSTRUCT ps;
-	DEVMODE dm;
 	HDC hdc, memdc;
 	HWND hDlg = NULL;
 	
@@ -169,6 +171,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BOOL open = FALSE;
 	static BOOL ClickOn = TRUE;
 	static BOOL bottomOn = FALSE;
+	static BOOL scoreAnimation = FALSE;
 	static HBITMAP copyBit, oldcopyBit;
 	static HBRUSH hBrush, oldBrush;
 	static BOOL egg = FALSE;
@@ -207,54 +210,63 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		switch (wParam) {
 		case 1:
-			timeRGB = RGB(rgb.r, rgb.g, rgb.b);
-			if (moveSquare == TRUE) {
-				if(moveX <= 100)
-					moveX++;
-			}
-			else {
-				if (moveX >= 0)
-					moveX--;
-			}
-			if (bottomOn == TRUE) {
-				if (brgb.check == TRUE) {
-					if (brgb.count < 6) {
-						brgb.r -= 16;
-						brgb.g -= 16;
-						brgb.b += 8;
-						brgb.count++;
-					}
-					else if (brgb.count >= 6 && brgb.count < 12) {
-						brgb.r += 16;
-						brgb.g += 16;
-						brgb.b -= 8;
-						brgb.count++;
-					}
-					else {
-						bottomOn = FALSE;
-						brgb.count = 0;
-					}
+			if (nowDisplay == 1) {
+				timeRGB = RGB(rgb.r, rgb.g, rgb.b);
+				if (moveSquare == TRUE) {
+					if (moveX <= 100)
+						moveX++;
 				}
 				else {
-					if (brgb.count < 6) {
-						brgb.r += 8;
-						brgb.g -= 16;
-						brgb.b -= 16;
-						brgb.count++;
-					}
-					else if (brgb.count >= 6 && brgb.count < 12) {
-						brgb.r -= 8;
-						brgb.g += 16;
-						brgb.b += 16;
-						brgb.count++;
+					if (moveX >= 0)
+						moveX--;
+				}
+				if (bottomOn == TRUE) {
+					if (brgb.check == TRUE) {
+						if (brgb.count < 6) {
+							brgb.r -= 16;
+							brgb.g -= 16;
+							brgb.b += 8;
+							brgb.count++;
+						}
+						else if (brgb.count >= 6 && brgb.count < 12) {
+							brgb.r += 16;
+							brgb.g += 16;
+							brgb.b -= 8;
+							brgb.count++;
+						}
+						else {
+							bottomOn = FALSE;
+							brgb.count = 0;
+						}
 					}
 					else {
-						bottomOn = FALSE;
-						brgb.count = 0;
+						if (brgb.count < 6) {
+							brgb.r += 8;
+							brgb.g -= 16;
+							brgb.b -= 16;
+							brgb.count++;
+						}
+						else if (brgb.count >= 6 && brgb.count < 12) {
+							brgb.r -= 8;
+							brgb.g += 16;
+							brgb.b += 16;
+							brgb.count++;
+						}
+						else {
+							bottomOn = FALSE;
+							brgb.count = 0;
+						}
 					}
 				}
+				bottomRGB = RGB(brgb.r, brgb.g, brgb.b);
 			}
-			bottomRGB = RGB(brgb.r, brgb.g, brgb.b);
+		
+			else if (nowDisplay == 2) {
+				if (slideLeft < ClientRect.right) {
+					slideLeft += acc * isTime;
+					isTime++;
+				}
+			}
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
@@ -288,6 +300,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				nowCount++;
 			else
 				KillTimer(hWnd, 5);
+			break;
+
+		case 6:
+			
+			scoreAnimationCount--;
 			break;
 		}
 		break;
@@ -377,8 +394,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 1) {
-			if (((clickX >= ClientRect.left + 50 && clickX <= ClientRect.left + 50 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 135 && clickY <= ClientRect.top + 135 + (ClientRect.right / 2 - 100)) ||
-				(clickX >= ClientRect.right / 2 + 50 && clickX <= ClientRect.right / 2 + 50 + (ClientRect.right / 2 - 100) && clickY >= ClientRect.top + 135 && clickY <= ClientRect.top + 135 + (ClientRect.right / 2 - 100))) && ClickOn == TRUE){
+			if (((clickX >= ClientRect.left + 17 && clickX <= ClientRect.left + 17 + (ClientRect.right / 2 - 50) && clickY >= ClientRect.top + 82 && clickY <= ClientRect.top + 82 + (ClientRect.right / 2 - 50)) ||
+				(clickX >= ClientRect.right / 2 + 33 && clickX <= ClientRect.right / 2 + 33 + (ClientRect.right / 2 - 50) && clickY >= ClientRect.top + 82 && clickY <= ClientRect.top + 82 + (ClientRect.right / 2 - 50))) && ClickOn == TRUE){
 				if (checkDifference(clickX, clickY, correct, ClientRect.right)) {
 					correct++;
 					score += 10;
@@ -397,6 +414,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					incorrect = TRUE;
 					aniCount = 1;
 					Life--;
+					if (Life == 0) {
+						nowDisplay = 2;
+						slideLeft = 0;
+						isTime = 0;
+						SetTimer(hWnd, 6, 100, NULL);
+						KillTimer(hWnd, 2);
+					}
 				}
 			}
 		}
@@ -414,7 +438,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		copyBit = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
 		oldcopyBit = (HBITMAP)SelectObject(memdc, copyBit);
-		PatBlt(memdc, 0, 0, ClientRect.right, ClientRect.bottom, WHITENESS);
+		PatBlt(memdc, 0, 0, ClientRect.right, ClientRect.bottom, BLACKNESS);
 		
 		hBrush = CreateSolidBrush(RGB(192, 192, 192));
 		oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
@@ -428,15 +452,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(confirm);
 			DestroyWindow(NameList);
 			DestroyWindow(StudentNumberList);
+			BG(memdc, hWnd);
 			hBrush = CreateSolidBrush(RGB(50, 100, 153));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+			
 			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 150, ClientRect.bottom, timerWidthSize, ClientRect.right / 2, hWnd, timeRGB);
-		
+			bottomBar(memdc, bottomRGB, hWnd);
 			hBrush = CreateSolidBrush(RGB(255, 155, 0));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 
 			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber);
-			remain(memdc, correct, hWnd, bottomRGB);
+			
 			Health(memdc, Life);
 			//===============고양이 보여용==================
 			if (egg == TRUE) {
@@ -466,7 +492,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
-				if (screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 135, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right)) {
+				if (screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right)) {
 					pictureNumber = rand() % 5 + 1;
 					correct = 0;
 					score += 50;
@@ -480,7 +506,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 			if (open == TRUE) {
 				if (openTime >= 2) {
-					if (openScreenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 135, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right) ) {
+					if (openScreenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right) ) {
 						SetTimer(hWnd, 2, 1000, NULL);
 						open = FALSE;
 						KillTimer(hWnd, 3);
@@ -488,22 +514,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				else 
-					screenAnimation(memdc, ClientRect.left + 50, slideLeft + 50, ClientRect.top + 135, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100, ClientRect.right);
+					screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right);
 			}
 			
-			bottomBar(memdc, bottomRGB, hWnd);
+			remain(memdc, correct, hWnd, bottomRGB);
 			SetBkColor(memdc, RGB(255, 255, 255));
 			SetBkColor(memdc, RGB(192, 192, 192));
+			
+			myPen = CreatePen(PS_SOLID, 0, RGB(255, 255, 255));
+			oldPen = SelectObject(memdc, myPen);
 			wsprintf((LPWSTR)totalScore, TEXT("%d"), score);
 			
-			TextOut(memdc, ClientRect.right - 100, ClientRect.top + 50, (LPWSTR)totalScore, 3);
+		//	TextOut(memdc, ClientRect.right - 100, ClientRect.top + 50, (LPWSTR)totalScore, 3);
 			
-		
+			scoreImage(memdc, hWnd, score, 3);
 			SelectObject(memdc, hOldFont);
 		}
 
 		else if (nowDisplay == 2) {
-			;
+			Result(memdc, score, slideLeft, hWnd);
 		}
 
 		BitBlt(hdc, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, memdc, 0, 0, SRCCOPY);

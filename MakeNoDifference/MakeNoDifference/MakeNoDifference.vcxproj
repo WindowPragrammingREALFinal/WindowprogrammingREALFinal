@@ -143,6 +143,7 @@
     <ClCompile Include="LoadDifferencePosition.cpp" />
     <ClCompile Include="login.cpp" />
     <ClCompile Include="mainFrame.cpp" />
+    <ClCompile Include="Result.cpp" />
     <ClCompile Include="shutdown.cpp" />
     <ClCompile Include="TimeBar.cpp" />
     <ClCompile Include="UI.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="LoadDifferencePosition.h" />
     <ClInclude Include="login.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="shutdown.h" />
     <ClInclude Include="TimeBar.h" />
     <ClInclude Include="UI.h" />
