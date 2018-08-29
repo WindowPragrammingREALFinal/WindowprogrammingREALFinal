@@ -131,7 +131,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int pictureNumber = 0;
 	static int aniCount = 1;
 	static int slideLeft = 0;
-	static int scoreAnimationCount = 3;
+
+	static int scoreAnimationCount = 0;
+	static BOOL scoreOn = FALSE;
+
 	static double acc = 1;
 	static BOOL chil = FALSE;
 	
@@ -223,14 +226,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (bottomOn == TRUE) {
 					if (brgb.check == TRUE) {
 						if (brgb.count < 6) {
-							brgb.r -= 16;
-							brgb.g -= 16;
+							brgb.r -= 13;
+							brgb.g -= 13;
 							brgb.b += 8;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r += 16;
-							brgb.g += 16;
+							brgb.r += 13;
+							brgb.g += 13;
 							brgb.b -= 8;
 							brgb.count++;
 						}
@@ -303,8 +306,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case 6:
-			
-			scoreAnimationCount--;
+			if(scoreAnimationCount < 6)
+				scoreAnimationCount++;
+			else {
+				scoreOn = FALSE;
+				scoreAnimationCount = 0;
+				KillTimer(hWnd, 6);
+			}
 			break;
 		}
 		break;
@@ -400,6 +408,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					correct++;
 					score += 10;
 					bottomOn = TRUE;
+					scoreOn = TRUE;
+					SetTimer(hWnd, 6, 1, NULL);
 					brgb.check = TRUE;
 					if (correct == 5) {
 						slideLeft = 0;
@@ -526,8 +536,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			wsprintf((LPWSTR)totalScore, TEXT("%d"), score);
 			
 		//	TextOut(memdc, ClientRect.right - 100, ClientRect.top + 50, (LPWSTR)totalScore, 3);
-			
-			scoreImage(memdc, hWnd, score, 3);
+			if(scoreOn == FALSE)
+				scoreImage(memdc, hWnd, score, 6);
+			else if(scoreOn == TRUE)
+				scoreImage(memdc, hWnd, score, scoreAnimationCount);
+
 			SelectObject(memdc, hOldFont);
 		}
 

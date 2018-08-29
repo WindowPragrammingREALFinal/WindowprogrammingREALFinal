@@ -45,26 +45,39 @@ void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 	GetClientRect(hWnd, &ClientRECT);
 	WCHAR LoadText[1000];
 
-	if (count == 0)
-		tempScore = Totalscore;
 
-	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", tempScore / 100000, tempScore / 100000, count);
+	if (Totalscore >= 100000)
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", tempScore / 100000, tempScore / 100000, count);
+	else
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", tempScore / 100000, tempScore / 100000, 6);
 	score[0].Load(LoadText);
 	temp = Totalscore % 100000;
 
-	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10000, temp / 10000, count);
+	if(Totalscore >= 10000)
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10000, temp / 10000, count);
+	else
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10000, temp / 10000, 6);
 	score[1].Load(LoadText);
 	temp %= 10000;
 
-	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 1000, temp / 1000, count);
+	if(Totalscore >= 1000)
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 1000, temp / 1000, count);
+	else
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 1000, temp / 1000, 6);
 	score[2].Load(LoadText);
 	temp %= 1000;
 
-	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 100, temp / 100, count);
+	if(Totalscore >= 100)
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 100, temp / 100, count);
+	else
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 100, temp / 100, 6);
 	score[3].Load(LoadText);
 	temp %= 100;
 
-	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10, temp / 10, count);
+	if(Totalscore >= 10)
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10, temp / 10, count);
+	else
+		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10, temp / 10, 6);
 	score[4].Load(LoadText);
 	temp %= 10;
 

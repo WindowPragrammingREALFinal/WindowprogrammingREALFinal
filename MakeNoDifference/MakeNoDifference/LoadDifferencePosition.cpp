@@ -38,7 +38,6 @@ void LoadDifferenctPosition(int pNumber, HWND hWnd) // 그림을 로드시에 메모장에�
 			Load[i].animationCount = 1;
 			Load[i].animation = FALSE;
 			Load[i].check = FALSE;
-			//wsprintf(LoadText, L"%s %d %d %d %d", LoadText,x,y,dx,dy);
 		}
 		dir.close();
 	}

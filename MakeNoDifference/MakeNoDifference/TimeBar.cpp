@@ -19,7 +19,7 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	GRADIENT_RECT gtr, gtr2;
 
 	vert[0].x = half - 15;
-	vert[0].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96);
+	vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
 	vert[0].Red = GetRValue(rgb) + 64 << 8;
 	vert[0].Green = GetGValue(rgb) + 64 << 8;
@@ -29,7 +29,7 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	// 그라데이션의 끝좌표를 명시한다.
 	vert[1].x = half + 15;
 	//vert[1].y = height + half - 100;
-	vert[1].y = (ClientRECT.right / 2 - 50) + 102;
+	vert[1].y = (ClientRECT.right / 2 - 50) + 82;
 
 	// 그라데이션의 끝색상를 명시한다.
 	vert[1].Red = GetRValue(rgb) << 8;
@@ -78,29 +78,29 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	
 //=====================================================================================================================
 	time[0].x = half - 25;
-	time[0].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96);
+	time[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 	time[1].x = half;
-	time[1].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96) - 25;
+	time[1].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96) - 25;
 	time[2].x = half + 25;
-	time[2].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96);
+	time[2].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 	time[3].x = half;
-	time[3].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96) + 25;
+	time[3].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96) + 25;
 
 	voez[0].x = half - 23;
-	voez[0].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96);
+	voez[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 	voez[1].x = half;
-	voez[1].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96) - 23;
+	voez[1].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96) - 23;
 	voez[2].x = half + 23;
-	voez[2].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96);
+	voez[2].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 	voez[3].x = half;
-	voez[3].y = 135 + (2 * ((double)(half - 100) / 96)) + ((96 - isTime) * (double)(half - 100) / 96) + 23;
+	voez[3].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96) + 23;
 
 	triangle[0].x = half - 26;
-	triangle[0].y = 102 + (ClientRECT.right / 2 - 50);
+	triangle[0].y = 82 + (ClientRECT.right / 2 - 50);
 	triangle[1].x = half - 1;
-	triangle[1].y = 102 + (ClientRECT.right / 2 - 50) - 25;
+	triangle[1].y = 82 + (ClientRECT.right / 2 - 50) - 25;
 	triangle[2].x = half + 24;
-	triangle[2].y = 102 + (ClientRECT.right / 2 - 50);
+	triangle[2].y = 82 + (ClientRECT.right / 2 - 50);
 
 	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
