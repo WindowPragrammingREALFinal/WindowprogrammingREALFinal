@@ -37,6 +37,12 @@ void Result(HDC memdc, int score, int slide, HWND hWnd) // 결과창 애니메이션도 �
 }
 
 static int tempScore;
+
+void scoreImageLoad(int score)
+{
+
+}
+
 void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 {
 	int temp;
@@ -85,7 +91,7 @@ void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 	score[5].Load(LoadText);
 	
 	for (int i = 0; i < 6; ++i)
-		score[i].Draw(memdc, ClientRECT.right / 2 + (i * 64) + 550, ClientRECT.top + 25, 64, 64,0,0,64,64);
+		score[i].Draw(memdc, ClientRECT.right / 2 + (i * 32) + 750, ClientRECT.top + 25, 32, 32,0,0,64,64);
 }
 
 void Start(HDC memdc, int moveX, HWND hWnd) //임시로 만들어둔 로그인 시작버튼

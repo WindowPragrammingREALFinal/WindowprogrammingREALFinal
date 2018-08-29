@@ -396,6 +396,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(NameList);
 				DestroyWindow(StudentNumberList);
 				LoadDifferenctPosition(pictureNumber, hWnd);
+				LoadCImagePicture(pictureNumber);
 				SetTimer(hWnd, 2, 1000, NULL);
 				SetTimer(hWnd, 1, 1, NULL);
 			}
@@ -414,6 +415,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (correct == 5) {
 						slideLeft = 0;
 						ClickOn = FALSE;
+						LoadCImagePicture(pictureNumber);
 						SetTimer(hWnd, 3, 1, NULL);
 						
 					}
@@ -506,6 +508,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					pictureNumber = rand() % 5 + 1;
 					correct = 0;
 					score += 50;
+					LoadCImagePicture(pictureNumber);
 					LoadDifferenctPosition(pictureNumber, hWnd);
 					open = TRUE;
 					openTime = 0;
