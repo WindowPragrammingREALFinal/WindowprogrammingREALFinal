@@ -15,7 +15,11 @@ void Health(HDC memdc, int Life) //È­¸éÀÇ ÁÂ»ó´Ü ³²Àº Ã¼·Â Ç¥½Ã
 		else
 			health[i].Load(LoadText2);
 
-	//	health[i].Draw(memdc, i * 50, 10, 50, 50, 0, 0, 50, 50);
+
+	}
+	for (int i = 0; i < 5; ++i) {
+		health[i].Draw(memdc, i * 50, 10, 50, 50, 0, 0, 50, 50);
+		health[i].Destroy();
 	}
 }
 
@@ -89,14 +93,17 @@ void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 
 	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp, temp, count);
 	score[5].Load(LoadText);
-	
+
+
 	for (int i = 0; i < 6; ++i)
-		score[i].Draw(memdc, ClientRECT.right / 2 + (i * 32) + 750, ClientRECT.top + 25, 32, 32,0,0,64,64);
+		score[i].Draw(memdc, ClientRECT.right / 2 + (i * 32) + 750, ClientRECT.top + 25, 32, 32, 0, 0, 64, 64);
+	for(int i = 0; i < 6; ++i)
+		score[i].Destroy();
 }
 
 void Start(HDC memdc, int moveX, HWND hWnd) //ÀÓ½Ã·Î ¸¸µé¾îµÐ ·Î±×ÀÎ ½ÃÀÛ¹öÆ°
 {
-	HBRUSH hBrush, oldBrush;
+	/*HBRUSH hBrush, oldBrush;
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
 	POINT square[4];
@@ -131,7 +138,7 @@ void Start(HDC memdc, int moveX, HWND hWnd) //ÀÓ½Ã·Î ¸¸µé¾îµÐ ·Î±×ÀÎ ½ÃÀÛ¹öÆ°
 	Polygon(memdc, square, 4);
 
 	DeleteObject(hBrush);
-	DeleteObject(oldBrush);
+	DeleteObject(oldBrush);*/
 
 }
 
@@ -348,14 +355,17 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 	return check;
 }
 
-void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // È­¸é Áß¾ÓºÎ »ó´Ü¿¡ À§Ä¡ÇÑ ³²Àº Æ²¸°°¹¼ö(+ »ï°¢Çü, »ç°¢ÇüÀÇ µðÀÚÀÎ)
+
+
+
+void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // È­¸é Áß¾ÓºÎ »ó´Ü¿¡ À§Ä¡ÇÑ ³²Àº Æ²¸°°¹¼ö(+ »ï°¢Çü, »ç°¢ÇüÀÇ µðÀÚÀÎ
 {
 	RECT ClientRECT;
 	static char difference[1000];
 	GetClientRect(hWnd, &ClientRECT);
-	HBRUSH hBrush, oldBrush;
+	static HBRUSH hBrush, oldBrush;
 
-	POINT left[3];	
+	POINT left[3];
 	POINT center[4];
 	POINT right[3];
 
@@ -385,11 +395,15 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // È­¸é Áß¾ÓºÎ »ó´Ü
 	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) -99, GetGValue(rgb) - 66, GetBValue(rgb) - 58));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, left, 3);
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
 	Rectangle(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right / 2 - 64, ClientRECT.top + 66);
 	
 	hBrush = CreateSolidBrush(RGB(170, 170, 170));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, center, 4);
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
 	
 	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 35, GetGValue(rgb) - 45, GetBValue(rgb) - 24));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
@@ -424,10 +438,7 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //ÇÏ´ÜºÎ¿¡ À§Ä¡ÇÏ¸ç Æ²¸°ºÎºÐÀ
 	GetClientRect(hWnd, &ClientRECT);
 	TRIVERTEX vert[2];
 	GRADIENT_RECT gtr;
-	HBRUSH hBrush, oldBrush;
-	HDC uiDC = CreateCompatibleDC(memdc);
-
-	BLENDFUNCTION t;
+	static HBRUSH hBrush, oldBrush;
 
 	
 	
@@ -439,7 +450,7 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //ÇÏ´ÜºÎ¿¡ À§Ä¡ÇÏ¸ç Æ²¸°ºÎºÐÀ
 	vert[0].Red = GetRValue(rgb) << 8;
 	vert[0].Green = GetGValue(rgb) << 8;
 	vert[0].Blue = GetBValue(rgb) << 8;
-	vert[0].Alpha = 0xFFFF;
+	vert[0].Alpha = 0x000000;
 
 	vert[1].x = ClientRECT.right;
 	vert[1].y = ClientRECT.bottom;
@@ -448,18 +459,12 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //ÇÏ´ÜºÎ¿¡ À§Ä¡ÇÏ¸ç Æ²¸°ºÎºÐÀ
 	vert[1].Red = 0xFFFFFF;
 	vert[1].Green = 0xFFFFFF;
 	vert[1].Blue = 0xFFFFFF;
-	vert[1].Alpha = 0xFFFF;
+	vert[1].Alpha = 0xFFFFFF;
 
 	gtr.UpperLeft = 0;
 	gtr.LowerRight = 1;
 
 	GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
-
-	t.BlendOp = AC_SRC_OVER;
-	t.BlendFlags = 0;
-	t.SourceConstantAlpha = 200;
-	t.AlphaFormat = 0;
-	AlphaBlend(memdc, ClientRECT.left, ClientRECT.top + (ClientRECT.right / 2 - 50) + 82, ClientRECT.right, ClientRECT.bottom, uiDC, ClientRECT.left, ClientRECT.top + (ClientRECT.right / 2 - 50) + 82, ClientRECT.right, ClientRECT.bottom, t) ;
 
 	hBrush = CreateSolidBrush(RGB(255, 255, 255));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
@@ -467,5 +472,6 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //ÇÏ´ÜºÎ¿¡ À§Ä¡ÇÏ¸ç Æ²¸°ºÎºÐÀ
 
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
-	DeleteDC(uiDC);
+//	DeleteObject(vert);
+//	DeleteObject(&gtr);
 }

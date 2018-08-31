@@ -58,21 +58,21 @@ void correctAnimation(HDC memdc, int correct, HINSTANCE g_hinst, int right) // Æ
 			CorrectFoot[i].Load(LoadText);
 			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Draw(memdc, (right / 2) + 67 + (Load[i].saveCorrectPosition.x - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
-			CorrectFoot[i].Destroy();
+			//CorrectFoot[i].Destroy();
 		}
 		else if(Load[i].saveCorrectPosition.x > right / 2 && Load[i].animation == TRUE) {
 			wsprintf(LoadText, L"C_BUTTON\\C_Button.png");
 			CorrectFoot[i].Load(LoadText);
 			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 67 - (right / 2 - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
-			CorrectFoot[i].Destroy();
+			//CorrectFoot[i].Destroy();
 		}
 		else if (Load[i].saveCorrectPosition.x < right / 2 && Load[i].animation == FALSE) {
 			wsprintf(LoadText, L"Collect_E\\C_Button2_%d.png", Load[i].animationCount);
 			CorrectFoot[i].Load(LoadText);
 			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Draw(memdc, (right / 2) + 67 + (Load[i].saveCorrectPosition.x - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
-			CorrectFoot[i].Destroy();
+			//CorrectFoot[i].Destroy();
 			Load[i].animationCount++;
 			if (Load[i].animationCount == 9)
 				Load[i].animation = TRUE;
@@ -82,12 +82,16 @@ void correctAnimation(HDC memdc, int correct, HINSTANCE g_hinst, int right) // Æ
 			CorrectFoot[i].Load(LoadText);
 			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
 			CorrectFoot[i].Draw(memdc, Load[i].saveCorrectPosition.x - 67 - (right / 2 - 50) - 45, Load[i].saveCorrectPosition.y - 45, 90, 90, 0, 0, 256, 256);
-			CorrectFoot[i].Destroy();
+			//CorrectFoot[i].Destroy();
 			Load[i].animationCount++;
 			if (Load[i].animationCount == 9)
 				Load[i].animation = TRUE;
 		}
+		//CorrectFoot[i].Destroy();
 	}
+	for (int i = 0; i < correct; ++i)
+		CorrectFoot[i].Destroy();
+		
 }
 
 void xAnimation(HDC memdc, int x, int y, int aniCount) // Àß¸øµÈ À§Ä¡¸¦ °ñ¶úÀ»¶§ ³ª¿À´Â ¾Ö´Ï¸ÞÀÌ¼Ç X

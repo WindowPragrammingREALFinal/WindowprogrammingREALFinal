@@ -8,7 +8,6 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 {
 
 	static HBRUSH hBrush, oldBrush;
-	WCHAR LoadText[1000];
 	HPEN myPen;
 	HGDIOBJ oldPen;
 
@@ -104,7 +103,8 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 
 	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
 //	Rectangle(memdc, half - 25, height + ((96 - isTime) * (double)(half - 100) / 96), half + 25, height + half - 100);
 
 	// Rectangle(memdc, width - 25, height + ((96 - isTime) * (double)(bottom - 100 - height) / 96), width + size + 25, bottom - 100);
@@ -112,14 +112,19 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	hBrush = CreateSolidBrush(RGB(0, 00, 0));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, time, 4);
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
 
 	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, triangle, 3);
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
 
 	hBrush = CreateSolidBrush(RGB(255, 255, 255));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, voez, 4);
+
 
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
