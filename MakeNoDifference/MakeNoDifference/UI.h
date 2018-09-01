@@ -4,7 +4,7 @@
 
 void Health(HDC memdc, int Life);
 
-void Result(HDC memdc, int score, int slide, HWND hWnd);
+//void Result(HDC memdc, int score, int slide, HWND hWnd);
 
 BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight);
 

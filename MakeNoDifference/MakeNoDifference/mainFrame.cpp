@@ -7,6 +7,7 @@
 #include "LoadDifferencePosition.h"
 #include "UI.h"
 #include "shutdown.h"
+#include "Result.h"
 #include <math.h>
 
 #define PI 3.141592654 
@@ -22,12 +23,15 @@ HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Make No Difference!";
 HINSTANCE g_hinst;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK ChildProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+
+static int windowX;
+static int windowY;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	int windowX = ::GetSystemMetrics(SM_CXSCREEN);
-	int windowY = ::GetSystemMetrics(SM_CYSCREEN);
+	windowX = ::GetSystemMetrics(SM_CXSCREEN);
+	windowY = ::GetSystemMetrics(SM_CYSCREEN);
 
 	HWND hWnd;
 	MSG Message;
@@ -48,11 +52,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
 
-	WndClass.hCursor = LoadCursor(NULL, IDC_HELP);
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
-	WndClass.lpszClassName = L"ChildClass"; // 차일드 윈도우 클래스 이름
-	WndClass.lpfnWndProc = (WNDPROC)ChildProc; // 차일드 윈도우 프로시저 지정
-	RegisterClassEx(&WndClass);
 
 	hWnd = CreateWindow(lpszClass, L"Make No Difference!", WS_OVERLAPPEDWINDOW, 0, -30, windowX, windowY, NULL, (HMENU)NULL, hInstance, NULL);
 
@@ -65,34 +64,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return Message.wParam;
 }
 
-
-LRESULT CALLBACK ChildProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-
-	PAINTSTRUCT ps;
-	static HBITMAP hbit, oldBit1, oldBit2;;
-
-	static int sizeX, sizeY;
-
-	switch (uMsg) {
-
-	case WM_CREATE:
-
-		break;
-
-	case WM_TIMER:
-
-		break;
-
-	case WM_KEYDOWN:
-
-		break;
-
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	}
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
 
 static int SideSize = 10;
 static int imageSize;
@@ -151,16 +122,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static bottomBarRGB brgb;
 	
 	
-	HPEN myPen;
-	HGDIOBJ oldPen;
+	static HPEN myPen;
+	static HGDIOBJ oldPen;
 	PAINTSTRUCT ps;
-	HDC hdc, memdc;
-	HWND hDlg = NULL;
-	
-	CImage cori;
-	WCHAR LoadText[1000];
-	
-	WCHAR name[100];
+	static HDC hdc, memdc;
+	static HWND hDlg = NULL;
+
+	static WCHAR name[100];
 	static WCHAR studentNumber[100];
 
 	static HWND confirm, NameList, StudentNumberList;
@@ -174,9 +142,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BOOL open = FALSE;
 	static BOOL ClickOn = TRUE;
 	static BOOL bottomOn = FALSE;
+	static BOOL load = TRUE;
 	static BOOL scoreAnimation = FALSE;
-	static HBITMAP copyBit, oldcopyBit;
-	static HBRUSH hBrush, oldBrush;
+
 	static BOOL egg = FALSE;
 	static char totalScore[1000];
 	static BOOL ChildOn = FALSE;
@@ -184,10 +152,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int clickX, clickY;
 	srand(time(0));
 	
-	HFONT hFont;
-	HFONT hOldFont;
-
-	HWND NextWnd;
+	static HFONT hFont;
+	static HFONT hOldFont;
+	static HBITMAP hBitmap, hbmMemOld;
+	static HBRUSH hBrush, oldBrush;
 
 	switch (iMessage) {
 	case WM_CREATE:
@@ -199,13 +167,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 		
-	/*	confirm = CreateWindow(L"button", L"입력완료", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 50, ClientRect.bottom / 2 + 100, 100, 20, hWnd, (HMENU)IDC_CONFIRM, g_hinst, NULL);
-		NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 100, ClientRect.bottom / 2 - 50 , 200, 25, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
-		StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 100, ClientRect.bottom / 2, 200, 25, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);*/
+		//confirm = CreateWindow(L"button", L"입력완료", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 50, ClientRect.bottom / 2 + 100, 100, 20, hWnd, (HMENU)IDC_CONFIRM, g_hinst, NULL);
+		//NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 100, ClientRect.bottom / 2 - 50 , 200, 25, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
+		//StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 100, ClientRect.bottom / 2, 200, 25, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
 		
 		SetTimer(hWnd, 1, 1, NULL);
 		SetTimer(hWnd, 5, 1, NULL);
-
+		
 		pictureNumber = rand() % 5 + 1;
 		
 		break;
@@ -226,15 +194,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (bottomOn == TRUE) {
 					if (brgb.check == TRUE) {
 						if (brgb.count < 6) {
-							brgb.r -= 13;
-							brgb.g -= 13;
-							brgb.b += 8;
+						//	brgb.r += 1;
+						//	brgb.g += 1;
+							brgb.b += 25;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r += 13;
-							brgb.g += 13;
-							brgb.b -= 8;
+						//	brgb.r -= 1;
+						//	brgb.g -= 1;
+							brgb.b -= 25;	
 							brgb.count++;
 						}
 						else {
@@ -244,15 +212,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					else {
 						if (brgb.count < 6) {
-							brgb.r += 8;
-							brgb.g -= 16;
-							brgb.b -= 16;
+							brgb.r += 25;
+						//	brgb.g += 1;
+						//	brgb.b += 1;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r -= 8;
-							brgb.g += 16;
-							brgb.b += 16;
+							brgb.r -= 25;
+						//	brgb.g -= 1;
+						//	brgb.b -= 1;
 							brgb.count++;
 						}
 						else {
@@ -274,15 +242,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case 2:
-			isTime -= 1;
+
 			rgb.r += 1;
 			if(rgb.g > 2)
 				rgb.g -= 2;
 			if(rgb.b > 0)
 				rgb.b -= 1;
 			
-			if (isTime == 0)
-				KillTimer(hWnd, 2);
+			if (isTime > 0)
+				isTime -= 1;
 			break;
 
 		case 3: 
@@ -294,7 +262,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if(openTime == 2){
 				slideLeft = 0;
 				SetTimer(hWnd, 3, 1, NULL);
-				InvalidateRect(hWnd, NULL, FALSE);
 			}
 			break;
 
@@ -363,14 +330,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_KEYDOWN:
-		if (wParam == 'P') {
-			if (egg == FALSE)
-				egg = TRUE;
-			else
-				egg = FALSE;
-		}
 
-		
+		if (nowDisplay == 0) {
+			nowDisplay = 1;
+			DestroyWindow(confirm);
+			DestroyWindow(NameList);
+			DestroyWindow(StudentNumberList);
+			LoadDifferenctPosition(pictureNumber, hWnd);
+			load = TRUE;
+			LoadCImagePicture(pictureNumber);
+			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
+			SetTimer(hWnd, 2, 1000, NULL);
+			SetTimer(hWnd, 1, 1, NULL);
+		}
 
 		/*else if (wParam == 'Q') {
 			ShutdownSystem(ShutdownTimeout, L"시스템을 종료합니다.", 128, TRUE, FALSE);
@@ -378,14 +350,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_CHAR:
-		if (wParam == VK_TAB) {
-			hWnd = ::GetFocus();
-			NextWnd = ::GetNextDlgTabItem(NameList, StudentNumberList, TRUE);
-			::SetFocus(NextWnd);
-		}
+
 		break;
 
 	case WM_LBUTTONUP:
+
 		clickX = LOWORD(lParam);
 		clickY = HIWORD(lParam);
 		if (nowDisplay == 0) {
@@ -396,7 +365,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(NameList);
 				DestroyWindow(StudentNumberList);
 				LoadDifferenctPosition(pictureNumber, hWnd);
+				load = TRUE;
 				LoadCImagePicture(pictureNumber);
+			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 				SetTimer(hWnd, 2, 1000, NULL);
 				SetTimer(hWnd, 1, 1, NULL);
 			}
@@ -415,7 +386,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (correct == 5) {
 						slideLeft = 0;
 						ClickOn = FALSE;
-						LoadCImagePicture(pictureNumber);
 						SetTimer(hWnd, 3, 1, NULL);
 						
 					}
@@ -442,18 +412,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hWnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
 	//	SetTextAlign(memdc, TA_CENTER);
-		hFont = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 255, 255, 255, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼엑스포"));
-		hOldFont = (HFONT)SelectObject(memdc, hFont);
+		
 	
 		myPen = CreatePen(PS_NULL, 0, RGB(255, 255, 255));
 		oldPen = SelectObject(memdc, myPen);
 
-		copyBit = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
-		oldcopyBit = (HBITMAP)SelectObject(memdc, copyBit);
-		PatBlt(memdc, 0, 0, ClientRect.right, ClientRect.bottom, BLACKNESS);
+		hBitmap = CreateCompatibleBitmap(hdc, ClientRect.right, ClientRect.bottom);
+		hbmMemOld = (HBITMAP)SelectObject(memdc, hBitmap);
+		SelectObject(memdc, (HBITMAP)hBitmap);
 		
+		hFont = CreateFont(30, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 255, 255, 255, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼엑스포"));
+		hOldFont = (HFONT)SelectObject(memdc, hFont);
 		hBrush = CreateSolidBrush(RGB(192, 192, 192));
 		oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+		DeleteObject(hBrush);
+		DeleteObject(oldBrush);
 		Rectangle(memdc, 0, 0, 1923, 1083);
 		if(nowDisplay == 0){
 			//Start(memdc, moveX, hWnd);
@@ -461,28 +434,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 1) {
-			DestroyWindow(confirm);
-			DestroyWindow(NameList);
-			DestroyWindow(StudentNumberList);
 			BG(memdc, hWnd);
+			bottomBar(memdc, bottomRGB, hWnd);
 			hBrush = CreateSolidBrush(RGB(50, 100, 153));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-			
+			DeleteObject(oldBrush);
+			DeleteObject(hBrush);
 			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 150, ClientRect.bottom, timerWidthSize, ClientRect.right / 2, hWnd, timeRGB);
-			bottomBar(memdc, bottomRGB, hWnd);
 			hBrush = CreateSolidBrush(RGB(255, 155, 0));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-
-			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber);
-			
-			Health(memdc, Life);
+			DeleteObject(oldBrush);
+			DeleteObject(hBrush);
+			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
+			load = FALSE;
+		//	Health(memdc, Life);
 			//===============고양이 보여용==================
-			if (egg == TRUE) {
-				wsprintf(LoadText, L"egg\\코리.jpg");
-				cori.Load(LoadText);
-				cori.Draw(memdc, ClientRect.left + 50, ClientRect.top + 150, ClientRect.right / 2 - 100, ClientRect.right / 2 - 100);
-				cori.Destroy();
-			}
 			//==============================================
 
 			if (correct != 0) {
@@ -502,13 +468,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 			hBrush = CreateSolidBrush(RGB(255, 155, 0));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+			DeleteObject(oldBrush);
+			DeleteObject(hBrush);
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
 				if (screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right)) {
 					pictureNumber = rand() % 5 + 1;
 					correct = 0;
 					score += 50;
+					load = TRUE;
+					DestoryCimage();
 					LoadCImagePicture(pictureNumber);
+					//LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber,load);
+					
+					load = FALSE;
 					LoadDifferenctPosition(pictureNumber, hWnd);
 					open = TRUE;
 					openTime = 0;
@@ -531,23 +504,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			
 			remain(memdc, correct, hWnd, bottomRGB);
-			SetBkColor(memdc, RGB(255, 255, 255));
-			SetBkColor(memdc, RGB(192, 192, 192));
+			//SetBkColor(memdc, RGB(255, 255, 255));
+			//SetBkColor(memdc, RGB(192, 192, 192));
 			
-			myPen = CreatePen(PS_SOLID, 0, RGB(255, 255, 255));
-			oldPen = SelectObject(memdc, myPen);
-			wsprintf((LPWSTR)totalScore, TEXT("%d"), score);
-			
-		//	TextOut(memdc, ClientRect.right - 100, ClientRect.top + 50, (LPWSTR)totalScore, 3);
 			if(scoreOn == FALSE)
 				scoreImage(memdc, hWnd, score, 6);
 			else if(scoreOn == TRUE)
 				scoreImage(memdc, hWnd, score, scoreAnimationCount);
 
-			SelectObject(memdc, hOldFont);
 		}
 
 		else if (nowDisplay == 2) {
+
 			Result(memdc, score, slideLeft, hWnd);
 		}
 
@@ -555,12 +523,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		DeleteObject(hBrush); 
 		DeleteObject(oldBrush);
-		DeleteDC(memdc);
 		DeleteObject(myPen);
 		DeleteObject(oldPen);
-		DeleteObject(copyBit);
-		DeleteObject(oldcopyBit);
+		DeleteObject(hBitmap);
+		DeleteObject(hbmMemOld);
 		DeleteObject(hFont);
+		DeleteObject(hOldFont);
+		DeleteDC(memdc);
+		DeleteDC(hdc);
 
 		EndPaint(hWnd, &ps);
 		return 0;

@@ -4,4 +4,4 @@
 
 void Result(HDC memdc, int score, int slide, HWND hWnd);
 
-void saveData();
+void saveData(int score, WCHAR name[100], WCHAR studentNumber[20]);
