@@ -23,22 +23,6 @@ void Health(HDC memdc, int Life) //화면의 좌상단 남은 체력 표시
 	}
 }
 
-void Result(HDC memdc, int score, int slide, HWND hWnd) // 결과창 애니메이션도 있음
-{
-	RECT ClientRECT;
-	HBRUSH hBrush, oldBrush;
-	GetClientRect(hWnd, &ClientRECT);
-
-
-	hBrush = CreateSolidBrush(RGB(100, 50, 232));
-	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-
-	Rectangle(memdc, ClientRECT.left, (ClientRECT.bottom / 5) * 2, slide, (ClientRECT.bottom / 5) * 2 + 3);
-	Rectangle(memdc, ClientRECT.right - slide, (ClientRECT.bottom / 5) * 3, ClientRECT.right, (ClientRECT.bottom / 5) * 3 + 3);
-
-	DeleteObject(hBrush);
-	DeleteObject(oldBrush);
-}
 
 static int tempScore;
 
@@ -360,58 +344,90 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 
 void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // 화면 중앙부 상단에 위치한 남은 틀린갯수(+ 삼각형, 사각형의 디자인
 {
+	CImage remainImage;
 	RECT ClientRECT;
+	WCHAR LoadText[1000];
 	static char difference[1000];
 	GetClientRect(hWnd, &ClientRECT);
 	static HBRUSH hBrush, oldBrush;
 
-	POINT left[3];
-	POINT center[4];
-	POINT right[3];
+	POINT leftTop[3];
+	POINT leftBottom[3];
+	POINT rightTop[3];
+	POINT rightBottom[3];
 
-	center[0].x = ClientRECT.right / 2 - 64;
-	center[0].y = ClientRECT.top + 66;
-	center[1].x = ClientRECT.right / 2;
-	center[1].y = ClientRECT.top + 2;
-	center[2].x = ClientRECT.right / 2 + 64;
-	center[2].y = ClientRECT.top + 66;
-	center[3].x = ClientRECT.right / 2;
-	center[3].y = ClientRECT.top + 128;
+	leftTop[0].x = ClientRECT.left;
+	leftTop[0].y = ClientRECT.top;
+	leftTop[1].x = ClientRECT.left + 140;
+	leftTop[1].y = ClientRECT.top;
+	leftTop[2].x = ClientRECT.left;
+	leftTop[2].y = ClientRECT.top + 160;
 
-	left[0].x = ClientRECT.right / 2 - 128;
-	left[0].y = ClientRECT.top;
-	left[1].x = ClientRECT.right / 2 - 64;
-	left[1].y = ClientRECT.top + 64;
-	left[2].x = ClientRECT.right / 2 ;
-	left[2].y = ClientRECT.top;
+	leftBottom[0].x = ClientRECT.left;
+	leftBottom[0].y = ClientRECT.bottom;
+	leftBottom[1].x = ClientRECT.left + 121;
+	leftBottom[1].y = ClientRECT.bottom;
+	leftBottom[2].x = ClientRECT.left;
+	leftBottom[2].y = ClientRECT.top + 900;
 
-	right[0].x = ClientRECT.right / 2;
-	right[0].y = ClientRECT.top;
-	right[1].x = ClientRECT.right / 2 + 64;
-	right[1].y = ClientRECT.top + 64;
-	right[2].x = ClientRECT.right / 2 + 128;
-	right[2].y = ClientRECT.top;
+	rightTop[0].x = ClientRECT.right;
+	rightTop[0].y = ClientRECT.top;
+	rightTop[1].x = ClientRECT.left + 1782;
+	rightTop[1].y = ClientRECT.top;
+	rightTop[2].x = ClientRECT.right;
+	rightTop[2].y = ClientRECT.top + 160;
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) -99, GetGValue(rgb) - 66, GetBValue(rgb) - 58));
+	rightBottom[0].x = ClientRECT.right;
+	rightBottom[0].y = ClientRECT.bottom;
+	rightBottom[1].x = ClientRECT.right;
+	rightBottom[1].y = ClientRECT.top + 900;
+	rightBottom[2].x = ClientRECT.right - 121;
+	rightBottom[2].y = ClientRECT.bottom;
+
+	wsprintf(LoadText, L"BG\\UI_Remain.png");
+	remainImage.Load(LoadText);
+	remainImage.Draw(memdc, ClientRECT.right / 2 - 73, ClientRECT.top, 146, 135 + (2 * ((double)(ClientRECT.right / 2 - 120) / 96)) - 25, 0, 0, 146, 160);
+	remainImage.Destroy();
+
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	Polygon(memdc, left, 3);
+	Polygon(memdc, leftTop, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
-	Rectangle(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right / 2 - 64, ClientRECT.top + 66);
-	
-	hBrush = CreateSolidBrush(RGB(170, 170, 170));
+
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	Polygon(memdc, center, 4);
+	Polygon(memdc, leftBottom, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
-	
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 35, GetGValue(rgb) - 45, GetBValue(rgb) - 24));
+
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	Polygon(memdc, right, 3);
-	Rectangle(memdc, ClientRECT.right / 2 + 64, ClientRECT.top, ClientRECT.right + 2, ClientRECT.top + 66);
+	Polygon(memdc, rightBottom, 3);
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
+
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
+	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	Polygon(memdc, rightTop, 3);
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
+	//Rectangle(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right / 2 - 64, ClientRECT.top + 66);
+	//
+	//hBrush = CreateSolidBrush(RGB(170, 170, 170));
+	//oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	//Polygon(memdc, center, 4);
+	//DeleteObject(hBrush);
+	//DeleteObject(oldBrush);
+	//
+	//hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 35, GetGValue(rgb) - 45, GetBValue(rgb) - 24));
+	//oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	//Polygon(memdc, right, 3);
+	//Rectangle(memdc, ClientRECT.right / 2 + 64, ClientRECT.top, ClientRECT.right + 2, ClientRECT.top + 66);
+
 
 	wsprintf((LPWSTR)difference, TEXT("%d"), 5 - correct);
-	SetBkColor(memdc, RGB(170, 170, 170));
+	SetBkColor(memdc, RGB(255, 255, 255));
 	TextOut(memdc, ClientRECT.right / 2 - 7, ClientRECT.top + 55, (LPWSTR)difference ,1);
 
 	DeleteObject(hBrush);
@@ -426,9 +442,9 @@ void BG(HDC memdc, HWND hWnd)
 	WCHAR LoadText[1000];
 	GetClientRect(hWnd, &ClientRECT);
 
-	wsprintf(LoadText, L"BG\\%BG_01.png");
+	wsprintf(LoadText, L"BG\\UI_01.png");
 	BG.Load(LoadText);
-	BG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom, 0, 0, 1920, 1080);
+	BG.Draw(memdc, ClientRECT.left, ClientRECT.top + 82, ClientRECT.right, 82 + (ClientRECT.right / 2 - 50), 0, 0, 1920, 1080);
 	BG.Destroy();
 }
 
@@ -436,42 +452,54 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //하단부에 위치하며 틀린부분�
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
-	TRIVERTEX vert[2];
-	GRADIENT_RECT gtr;
-	static HBRUSH hBrush, oldBrush;
+	WCHAR LoadText[1000];
+	//TRIVERTEX vert[2];
+	//GRADIENT_RECT gtr;
+	//static HBRUSH hBrush, oldBrush;
 
-	
-	
+	//
+	//
 
-	vert[0].x = ClientRECT.left;
-	vert[0].y = ClientRECT.top + (ClientRECT.right / 2 - 50) + 82;
+	//vert[0].x = ClientRECT.left;
+	//vert[0].y = ClientRECT.top + (ClientRECT.right / 2 - 50) + 82;
 
-	// 그라데이션의 끝색상를 명시한다.
-	vert[0].Red = GetRValue(rgb) << 8;
-	vert[0].Green = GetGValue(rgb) << 8;
-	vert[0].Blue = GetBValue(rgb) << 8;
-	vert[0].Alpha = 0x000000;
+	//// 그라데이션의 끝색상를 명시한다.
+	//vert[0].Red = GetRValue(rgb) << 8;
+	//vert[0].Green = GetGValue(rgb) << 8;
+	//vert[0].Blue = GetBValue(rgb) << 8;
+	//vert[0].Alpha = 0x000000;
 
-	vert[1].x = ClientRECT.right;
-	vert[1].y = ClientRECT.bottom;
+	//vert[1].x = ClientRECT.right;
+	//vert[1].y = ClientRECT.bottom;
 
-	// 그라데이션의 시작색상을 명시한다.
-	vert[1].Red = 0xFFFFFF;
-	vert[1].Green = 0xFFFFFF;
-	vert[1].Blue = 0xFFFFFF;
-	vert[1].Alpha = 0xFFFFFF;
+	//// 그라데이션의 시작색상을 명시한다.
+	//vert[1].Red = 0xFFFFFF;
+	//vert[1].Green = 0xFFFFFF;
+	//vert[1].Blue = 0xFFFFFF;
+	//vert[1].Alpha = 0xFFFFFF;
 
-	gtr.UpperLeft = 0;
-	gtr.LowerRight = 1;
+	//gtr.UpperLeft = 0;
+	//gtr.LowerRight = 1;
 
-	GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
+	//GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 
-	hBrush = CreateSolidBrush(RGB(255, 255, 255));
-	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	Rectangle(memdc, ClientRECT.left, ClientRECT.top + 82 + (ClientRECT.right / 2 - 50), ClientRECT.right, ClientRECT.top + 85 + (ClientRECT.right / 2 - 50));
+	//hBrush = CreateSolidBrush(RGB(255, 255, 255));
+	//oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+	//Rectangle(memdc, ClientRECT.left, ClientRECT.top + 82 + (ClientRECT.right / 2 - 50), ClientRECT.right, ClientRECT.top + 85 + (ClientRECT.right / 2 - 50));
 
-	DeleteObject(hBrush);
-	DeleteObject(oldBrush);
+	//DeleteObject(hBrush);
+	//DeleteObject(oldBrush);
 //	DeleteObject(vert);
 //	DeleteObject(&gtr);
+	CImage topBar;
+	CImage BottomBar;
+	wsprintf(LoadText, L"BG\\bottom.png");
+	BottomBar.Load(LoadText);
+	BottomBar.Draw(memdc, ClientRECT.left, ClientRECT.top + (ClientRECT.right / 2 - 50) + 80, ClientRECT.right, (ClientRECT.bottom) - (ClientRECT.top + (ClientRECT.right / 2 - 50) + 66),0, 0, 1917, 67);
+	BottomBar.Destroy();
+
+	wsprintf(LoadText, L"BG\\top.png");
+	topBar.Load(LoadText);
+	topBar.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, 82, 0, 0, 1922, 76);
+	topBar.Destroy();
 }

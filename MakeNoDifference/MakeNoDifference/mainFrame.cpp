@@ -7,6 +7,7 @@
 #include "LoadDifferencePosition.h"
 #include "UI.h"
 #include "shutdown.h"
+#include "Result.h"
 #include <math.h>
 
 #define PI 3.141592654 
@@ -24,10 +25,13 @@ HINSTANCE g_hinst;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 
+static int windowX;
+static int windowY;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	int windowX = ::GetSystemMetrics(SM_CXSCREEN);
-	int windowY = ::GetSystemMetrics(SM_CYSCREEN);
+	windowX = ::GetSystemMetrics(SM_CXSCREEN);
+	windowY = ::GetSystemMetrics(SM_CYSCREEN);
 
 	HWND hWnd;
 	MSG Message;
@@ -124,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static HDC hdc, memdc;
 	static HWND hDlg = NULL;
 
-	WCHAR name[100];
+	static WCHAR name[100];
 	static WCHAR studentNumber[100];
 
 	static HWND confirm, NameList, StudentNumberList;
@@ -190,15 +194,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (bottomOn == TRUE) {
 					if (brgb.check == TRUE) {
 						if (brgb.count < 6) {
-							brgb.r -= 13;
-							brgb.g -= 13;
-							brgb.b += 8;
+						//	brgb.r += 1;
+						//	brgb.g += 1;
+							brgb.b += 25;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r += 13;
-							brgb.g += 13;
-							brgb.b -= 8;
+						//	brgb.r -= 1;
+						//	brgb.g -= 1;
+							brgb.b -= 25;	
 							brgb.count++;
 						}
 						else {
@@ -208,15 +212,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					else {
 						if (brgb.count < 6) {
-							brgb.r += 8;
-							brgb.g -= 16;
-							brgb.b -= 16;
+							brgb.r += 25;
+						//	brgb.g += 1;
+						//	brgb.b += 1;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r -= 8;
-							brgb.g += 16;
-							brgb.b += 16;
+							brgb.r -= 25;
+						//	brgb.g -= 1;
+						//	brgb.b -= 1;
 							brgb.count++;
 						}
 						else {
@@ -247,8 +251,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 			if (isTime > 0)
 				isTime -= 1;
-			DestoryCimage();
-			LoadCImagePicture(pictureNumber);
 			break;
 
 		case 3: 
@@ -329,7 +331,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	case WM_KEYDOWN:
 
-		
+		if (nowDisplay == 0) {
+			nowDisplay = 1;
+			DestroyWindow(confirm);
+			DestroyWindow(NameList);
+			DestroyWindow(StudentNumberList);
+			LoadDifferenctPosition(pictureNumber, hWnd);
+			load = TRUE;
+			LoadCImagePicture(pictureNumber);
+			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
+			SetTimer(hWnd, 2, 1000, NULL);
+			SetTimer(hWnd, 1, 1, NULL);
+		}
 
 		/*else if (wParam == 'Q') {
 			ShutdownSystem(ShutdownTimeout, L"시스템을 종료합니다.", 128, TRUE, FALSE);
@@ -422,12 +435,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		else if (nowDisplay == 1) {
 			BG(memdc, hWnd);
+			bottomBar(memdc, bottomRGB, hWnd);
 			hBrush = CreateSolidBrush(RGB(50, 100, 153));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 			DeleteObject(oldBrush);
 			DeleteObject(hBrush);
 			TimeBar(memdc, isTime, g_hinst, ClientRect.right / 2 - timerWidthSize / 2, ClientRect.top + 150, ClientRect.bottom, timerWidthSize, ClientRect.right / 2, hWnd, timeRGB);
-			bottomBar(memdc, bottomRGB, hWnd);
 			hBrush = CreateSolidBrush(RGB(255, 155, 0));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 			DeleteObject(oldBrush);
@@ -502,6 +515,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 2) {
+
 			Result(memdc, score, slideLeft, hWnd);
 		}
 
