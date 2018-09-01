@@ -20,6 +20,7 @@ void Result(HDC memdc, int score, int slide, HWND hWnd) // 결과창 애니메이션도 �
 
 void saveData(int score, WCHAR name[100], WCHAR studentNumber[20])
 {
+
 	// 이곳이 혁수를 위한 장소 :)
 
 	// 여기서 사용자 이름, 점수를 저장해주세요
