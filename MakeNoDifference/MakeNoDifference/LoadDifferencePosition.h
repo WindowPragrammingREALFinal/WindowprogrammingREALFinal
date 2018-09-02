@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <atlImage.h>
 
-void LoadDifferenctPosition(int root, HWND hWnd);
+void LoadDifferenctPosition(int root, int difference, HWND hWnd);
 
 BOOL checkDifference(int x, int y, int correct, int right);
 

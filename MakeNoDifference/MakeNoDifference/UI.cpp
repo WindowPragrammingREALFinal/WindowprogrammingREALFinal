@@ -503,3 +503,26 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //하단부에 위치하며 틀린부분�
 	topBar.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, 82, 0, 0, 1920, 102);
 	topBar.Destroy();
 }
+
+void login(HDC memdc, HWND hWnd)
+{
+	CImage loginBG;
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+	WCHAR LoadText[1000];
+
+	wsprintf(LoadText, L"BG\\UI_login.png");
+	loginBG.Load(LoadText);
+	loginBG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom, 0, 0, 1920, 1080);
+	loginBG.Destroy();
+}
+
+void signIn(HDC memdc)
+{
+	CImage signIn;
+	WCHAR LoadText[1000];
+	wsprintf(LoadText, L"BG\\UI_Start.png");
+	signIn.Load(LoadText);
+	signIn.Draw(memdc, 1483, 879, 191, 46, 0, 0, 191, 46);
+	signIn.Destroy();
+}

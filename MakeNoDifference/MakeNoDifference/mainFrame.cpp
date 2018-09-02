@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <iostream>
 #include <time.h>
 #include "resource.h"
 #include "login.h"
@@ -8,6 +9,7 @@
 #include "UI.h"
 #include "shutdown.h"
 #include "Result.h"
+#include "NextPicture.h"
 #include <math.h>
 
 #define PI 3.141592654 
@@ -100,6 +102,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static double isTime = 96;
 	static int score = 0;
 	static int pictureNumber = 0;
+	static int differenceNum = 0;
 	static int aniCount = 1;
 	static int slideLeft = 0;
 
@@ -152,6 +155,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int clickX, clickY;
 	srand(time(0));
 	
+	static COLORREF loginRGB;
 	static HFONT hFont;
 	static HFONT hOldFont;
 	static HBITMAP hBitmap, hbmMemOld;
@@ -167,16 +171,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 		
-		//confirm = CreateWindow(L"button", L"ÀÔ·Â¿Ï·á", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 50, ClientRect.bottom / 2 + 100, 100, 20, hWnd, (HMENU)IDC_CONFIRM, g_hinst, NULL);
-		//NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 100, ClientRect.bottom / 2 - 50 , 200, 25, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
-		//StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, ClientRect.right / 2 - 100, ClientRect.bottom / 2, 200, 25, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
-		
+	
+
 		SetTimer(hWnd, 1, 1, NULL);
 		SetTimer(hWnd, 5, 1, NULL);
 		
 		//pictureNumber = rand() % 16 + 1;
-		pictureNumber = 13;
-		
+		pictureNumber = nextNumber();
+		differenceNum = differenceNumber(pictureNumber);
 		break;
 
 	case WM_TIMER:
@@ -307,11 +309,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDC_EDIT1:
-	
+			hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
+			SendMessage(NameList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+			SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+		//	GetDlgItemText(hWnd, IDC_EDIT1, name, 100);
 			break;
 
 		case IDC_EDIT2:
-
+			hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
+			SendMessage(NameList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+			SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+		//	GetDlgItemText(hWnd, IDC_EDIT2, studentNumber, 100);
 			break;
 
 		case IDC_CONFIRM:
@@ -319,30 +327,52 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			GetDlgItemText(hWnd, IDC_EDIT2, studentNumber, 100);
 			
 			SetTimer(hWnd, 1, 1, NULL);
-			LoadDifferenctPosition(pictureNumber, hWnd);
+			LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
 			nowDisplay = 1;
 			SetTimer(hWnd, 2, 1000, NULL);
-			
 
 			break;
 
 		
 		}
+		
+		break;
+
+
+	case WM_CTLCOLOREDIT:
+
+
+		SetTextColor((HDC)wParam, RGB(113,203, 230));
+		SetTextColor((HDC)wParam, RGB(113, 203, 230));
+		return (BOOL)(MyPen = CreatePen(PS_NULL, 0, RGB(113, 203, 230)));
+
 		break;
 
 	case WM_KEYDOWN:
 
 		if (nowDisplay == 0) {
-			nowDisplay = 1;
-			DestroyWindow(confirm);
-			DestroyWindow(NameList);
-			DestroyWindow(StudentNumberList);
-			LoadDifferenctPosition(pictureNumber, hWnd);
-			load = TRUE;
-			LoadCImagePicture(pictureNumber);
-			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
-			SetTimer(hWnd, 2, 1000, NULL);
-			SetTimer(hWnd, 1, 1, NULL);
+			nowDisplay = 3;
+
+			
+			NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 660, 418, 410, 52, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
+			StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 1010, 662, 410, 52, hWnd, (HMENU)IDC_EDIT2, g_hInst, NULL);
+
+		}
+		
+		else if (nowDisplay == 1) {
+			if (wParam == VK_SPACE) {
+				correct = 5;
+				open = FALSE;
+				slideLeft = 0;
+				ClickOn = FALSE;
+				SetTimer(hWnd, 3, 1, NULL);
+			}
+		}
+
+		else if (nowDisplay == 3) {
+			if (wParam == VK_RETURN) {
+				
+			}
 		}
 
 		/*else if (wParam == 'Q') {
@@ -365,9 +395,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(confirm);
 				DestroyWindow(NameList);
 				DestroyWindow(StudentNumberList);
-				LoadDifferenctPosition(pictureNumber, hWnd);
+				LoadDifferenctPosition(pictureNumber, differenceNum ,hWnd);
 				load = TRUE;
-				LoadCImagePicture(pictureNumber);
+				LoadCImagePicture(pictureNumber,differenceNum);
 			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 				SetTimer(hWnd, 2, 1000, NULL);
 				SetTimer(hWnd, 1, 1, NULL);
@@ -406,6 +436,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			}
+		}
+
+		else if (nowDisplay == 3) {
+			if(clickX > 1483 && clickX < 1674 && clickY > 879 && clickY < 925)
+			DestroyWindow(confirm);
+			DestroyWindow(NameList);
+			DestroyWindow(StudentNumberList);
+			LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
+			load = TRUE;
+			LoadCImagePicture(pictureNumber, differenceNum);
+			nowDisplay = 1;
+			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
+			SetTimer(hWnd, 2, 1000, NULL);
+			SetTimer(hWnd, 1, 1, NULL);
 		}
 
 		break;
@@ -474,16 +518,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
 				if (screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right)) {
-					pictureNumber = rand() % 16 + 1;
+					pictureNumber = nextNumber();
+					differenceNum = differenceNumber(pictureNumber);
 					correct = 0;
 					score += 50;
 					load = TRUE;
 					DestoryCimage();
-					LoadCImagePicture(pictureNumber);
+					LoadCImagePicture(pictureNumber,differenceNum);
 					//LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber,load);
 					
 					load = FALSE;
-					LoadDifferenctPosition(pictureNumber, hWnd);
+					LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
 					open = TRUE;
 					openTime = 0;
 					KillTimer(hWnd, 3);
@@ -505,8 +550,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			
 			remain(memdc, correct, hWnd, bottomRGB);
-			//SetBkColor(memdc, RGB(255, 255, 255));
-			//SetBkColor(memdc, RGB(192, 192, 192));
 			
 			if(scoreOn == FALSE)
 				scoreImage(memdc, hWnd, score, 6);
@@ -518,6 +561,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		else if (nowDisplay == 2) {
 
 			Result(memdc, score, slideLeft, hWnd);
+		}
+
+		else if (nowDisplay == 3) {
+			hFont = CreateFont(400, 400, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 255, 255, 255, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¿¢½ºÆ÷"));
+			hOldFont = (HFONT)SelectObject(memdc, hFont);
+			login(memdc, hWnd);
+
+			GetDlgItemText(hWnd, IDC_EDIT1, name, 100);
+			GetDlgItemText(hWnd, IDC_EDIT2, studentNumber, 100);
+			if (name[0] != '\0' && studentNumber[0] != '\0')
+				signIn(memdc);
+	
+			
+
+			DeleteObject(hFont);
+			DeleteObject(hOldFont);
 		}
 
 		BitBlt(hdc, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, memdc, 0, 0, SRCCOPY);

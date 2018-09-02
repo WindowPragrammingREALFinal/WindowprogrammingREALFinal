@@ -4,13 +4,13 @@
 CImage MainImage;
 CImage DifferenceImage;
 
-void LoadCImagePicture(int pNumber)
+void LoadCImagePicture(int pNumber, int differenceNumber)
 {
 	WCHAR LoadText[1000];
 	WCHAR LoadText2[1000];
 	wsprintf(LoadText, L"IMG_03_00\\Stage%d\\IMG_0%d_00.png", pNumber, pNumber);
 	MainImage.Load(LoadText);
-	wsprintf(LoadText2, L"IMG_03_00\\Stage%d\\IMG_0%d_01.png", pNumber, pNumber);
+	wsprintf(LoadText2, L"IMG_03_00\\Stage%d\\IMG_0%d_0%d.png", pNumber, pNumber,differenceNumber);
 	DifferenceImage.Load(LoadText2);
 }
 

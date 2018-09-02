@@ -19,3 +19,7 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd);
 void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count);
 
 void BG(HDC memdc, HWND hWnd);
+
+void login(HDC memdc, HWND hWnd);
+
+void signIn(HDC memdc);

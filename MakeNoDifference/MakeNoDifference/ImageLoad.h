@@ -4,6 +4,6 @@
 
 void LoadPicture(HDC memdc, HINSTANCE g_hinst, int left, int top, int right, int bottom, int pNumber, BOOL load);
 
-void LoadCImagePicture(int pNumber);
+void LoadCImagePicture(int pNumber, int differenceNumber);
 
 void DestoryCimage();

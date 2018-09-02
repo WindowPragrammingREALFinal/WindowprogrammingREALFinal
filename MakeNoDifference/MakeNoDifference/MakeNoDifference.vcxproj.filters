@@ -39,6 +39,9 @@
     <ClCompile Include="Result.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="NextPicture.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TimeBar.h">
@@ -63,6 +66,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Result.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NextPicture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
