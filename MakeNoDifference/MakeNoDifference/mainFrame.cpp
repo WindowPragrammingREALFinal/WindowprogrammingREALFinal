@@ -174,7 +174,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 1, 1, NULL);
 		SetTimer(hWnd, 5, 1, NULL);
 		
-		pictureNumber = rand() % 5 + 1;
+		//pictureNumber = rand() % 16 + 1;
+		pictureNumber = 13;
 		
 		break;
 
@@ -473,7 +474,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
 				if (screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right)) {
-					pictureNumber = rand() % 5 + 1;
+					pictureNumber = rand() % 16 + 1;
 					correct = 0;
 					score += 50;
 					load = TRUE;

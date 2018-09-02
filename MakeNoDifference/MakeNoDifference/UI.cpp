@@ -493,13 +493,13 @@ void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //하단부에 위치하며 틀린부분�
 //	DeleteObject(&gtr);
 	CImage topBar;
 	CImage BottomBar;
-	wsprintf(LoadText, L"BG\\bottom.png");
+	wsprintf(LoadText, L"BG\\UI_UDbar2.png");
 	BottomBar.Load(LoadText);
-	BottomBar.Draw(memdc, ClientRECT.left, ClientRECT.top + (ClientRECT.right / 2 - 50) + 80, ClientRECT.right, (ClientRECT.bottom) - (ClientRECT.top + (ClientRECT.right / 2 - 50) + 66),0, 0, 1917, 67);
+	BottomBar.Draw(memdc, ClientRECT.left, ClientRECT.top + (ClientRECT.right / 2 - 50) + 80, ClientRECT.right, (ClientRECT.bottom) - (ClientRECT.top + (ClientRECT.right / 2 - 50) + 66),0, 0, 1920, 120);
 	BottomBar.Destroy();
 
-	wsprintf(LoadText, L"BG\\top.png");
+	wsprintf(LoadText, L"BG\\UI_UPbar2.png");
 	topBar.Load(LoadText);
-	topBar.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, 82, 0, 0, 1922, 76);
+	topBar.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, 82, 0, 0, 1920, 102);
 	topBar.Destroy();
 }
