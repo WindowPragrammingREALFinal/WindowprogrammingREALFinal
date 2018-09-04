@@ -163,6 +163,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static HBITMAP hBitmap, hbmMemOld;
 	static HBRUSH hBrush, oldBrush;
 
+	//result.cpp에서 이용
+	static int score_digit = 10;
+	static bool return_but_on = false;
+
 	switch (iMessage) {
 	case WM_CREATE:
 		Left = ClientRect.left;
@@ -242,6 +246,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					slideLeft += acc * isTime;
 					isTime++;
 				}
+				else
+				{
+					static int temp_time = 1;
+
+					temp_time++;
+
+					if ((temp_time % 30 == 0)&&(score_digit<1000000))
+					{
+						if (score_digit != 1000000)
+							score_digit = score_digit * 10;
+						temp_time = 1;
+					}
+
+				}
 			}
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
@@ -295,6 +313,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				KillTimer(hWnd, 6);
 			}
 			break;
+		case 7:  //결과창 모션용 타이머 꼬여서 그냥 새로 추가
+		{
+
+
+			break;
+		}
 		}
 		break;
 
@@ -448,7 +472,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				}
 			}
 		}
+		else if (nowDisplay == 2)
+		{
+			if (return_but_on == true)  
+			{
+				
+				//if ((clickX > /****/ && clickX < /****/) && (clickY > /****/ && clickY < /****/)){   //뒤로가기 버튼 좌표
+			
+				     //버튼 클릭시 
 
+				//}
+			
+			}
+		}
 		else if (nowDisplay == 3) {
 			if ((clickX > 1483 && clickX < 1674) && (clickY > 879 && clickY < 925) && startButton == TRUE) {
 				DestroyWindow(confirm);
@@ -504,9 +540,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 			load = FALSE;
 		//	Health(memdc, Life);
-			//===============고양이 보여용==================
-			//==============================================
-
+	
 			if (correct != 0) {
 				correctAnimation(memdc, correct, g_hinst, ClientRect.right);
 			}
@@ -559,6 +593,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				else 
 					screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right);
 			}
+
 			
 			remain(memdc, correct, hWnd, bottomRGB);
 			
@@ -567,11 +602,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			else if(scoreOn == TRUE)
 				scoreImage(memdc, hWnd, score, scoreAnimationCount);
 
+			HFONT hFont, oldFont;
+			hFont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
+			oldFont = (HFONT)SelectObject(memdc, hFont);
+
+			
+			WCHAR checkcheckcheckcheck[1000];
+			wsprintf(checkcheckcheckcheck, L"%d", pictureNumber);
+			TextOut(memdc, (ClientRect.left + ClientRect.right) / 2, (ClientRect.top + ClientRect.bottom) / 2, checkcheckcheckcheck, wcslen(checkcheckcheckcheck));
+
+			DeleteObject(hFont);
+			DeleteObject(oldFont);
 		}
 
 		else if (nowDisplay == 2) {
 
-			Result(memdc, score, slideLeft, hWnd);
+			Result(memdc, score,   name, studentNumber,slideLeft, score_digit, return_but_on, hWnd);
 		}
 
 		else if (nowDisplay == 3) {
