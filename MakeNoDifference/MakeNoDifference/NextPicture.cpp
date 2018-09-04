@@ -2,13 +2,13 @@
 #include <fstream>
 #include <iostream>
 
-static int saveNumber[16];
+static int saveNumber[18];
 static int count = 0;
 int nextNumber()
 {
 	int next;
 	srand(time(0));
-	next = rand() % 16 + 1;
+	next = rand() % 18 + 1;
 	BOOL check = FALSE;
 	BOOL crash = FALSE;
 
@@ -22,7 +22,7 @@ int nextNumber()
 			for (int i = 0; i < count; ++i) {
 				if (saveNumber[i] == next) {
 					next += 1;
-					if (next == 17)
+					if (next == 19)
 						next = 1;
 					i = 0;
 				}

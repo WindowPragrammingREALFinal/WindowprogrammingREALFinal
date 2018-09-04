@@ -155,6 +155,7 @@
     <ClInclude Include="login.h" />
     <ClInclude Include="NextPicture.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="shutdown.h" />
     <ClInclude Include="TimeBar.h" />

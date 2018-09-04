@@ -55,7 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	RegisterClassEx(&WndClass);
 
 
-	hWnd = CreateWindow(lpszClass, L"Make No Difference!", WS_OVERLAPPEDWINDOW, 0, -30, windowX, windowY, NULL, (HMENU)NULL, hInstance, NULL);
+	hWnd = CreateWindow(lpszClass, L"Make No Difference!", WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, -30, windowX, windowY, NULL, (HMENU)NULL, hInstance, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -147,6 +147,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BOOL bottomOn = FALSE;
 	static BOOL load = TRUE;
 	static BOOL scoreAnimation = FALSE;
+	static BOOL wcCheck = FALSE;
 
 	static BOOL egg = FALSE;
 	static char totalScore[1000];
@@ -309,24 +310,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDC_EDIT1:
-			hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
+/*			hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
 			SendMessage(NameList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
-			SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+			SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE)*/;
 		//	GetDlgItemText(hWnd, IDC_EDIT1, name, 100);
 			break;
 
 		case IDC_EDIT2:
-			hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
+			/*hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 3, 2, 1, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
 			SendMessage(NameList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
-			SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+			SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);*/
 		//	GetDlgItemText(hWnd, IDC_EDIT2, studentNumber, 100);
+
 			break;
 
 		case IDC_CONFIRM:
 			GetDlgItemText(hWnd, IDC_EDIT1, name, 100);
 			GetDlgItemText(hWnd, IDC_EDIT2, studentNumber, 100);
 			
-			SetTimer(hWnd, 1, 1, NULL);
 			LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
 			nowDisplay = 1;
 			SetTimer(hWnd, 2, 1000, NULL);
@@ -340,9 +341,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_CTLCOLOREDIT:
-
-
-		SetTextColor((HDC)wParam, RGB(113,203, 230));
+		hFont = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("ÈÞ¸Õ¸ðÀ½T"));
+		SendMessage(NameList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+		SendMessage(StudentNumberList, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE);
+		SetTextColor((HDC)wParam, RGB(113, 203, 230));
 		SetTextColor((HDC)wParam, RGB(113, 203, 230));
 		return (BOOL)(MyPen = CreatePen(PS_NULL, 0, RGB(113, 203, 230)));
 
@@ -354,8 +356,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			nowDisplay = 3;
 
 			
-			NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 660, 418, 410, 52, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
-			StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 1010, 662, 410, 52, hWnd, (HMENU)IDC_EDIT2, g_hInst, NULL);
+			StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 660, 418, 410, 35, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
+			NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 1010, 662, 410, 35, hWnd, (HMENU)IDC_EDIT2, g_hInst, NULL);
 
 		}
 		
@@ -370,9 +372,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 3) {
-			if (wParam == VK_RETURN) {
-				
-			}
+
+		
 		}
 
 		/*else if (wParam == 'Q') {
@@ -400,7 +401,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				LoadCImagePicture(pictureNumber,differenceNum);
 			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 				SetTimer(hWnd, 2, 1000, NULL);
-				SetTimer(hWnd, 1, 1, NULL);
 			}
 		}
 
@@ -439,17 +439,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 3) {
-			if(clickX > 1483 && clickX < 1674 && clickY > 879 && clickY < 925)
-			DestroyWindow(confirm);
-			DestroyWindow(NameList);
-			DestroyWindow(StudentNumberList);
-			LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
-			load = TRUE;
-			LoadCImagePicture(pictureNumber, differenceNum);
-			nowDisplay = 1;
-			//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
-			SetTimer(hWnd, 2, 1000, NULL);
-			SetTimer(hWnd, 1, 1, NULL);
+			if ((clickX > 1483 && clickX < 1674) && (clickY > 879 && clickY < 925)) {
+				DestroyWindow(confirm);
+				DestroyWindow(NameList);
+				DestroyWindow(StudentNumberList);
+				LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
+				load = TRUE;
+				LoadCImagePicture(pictureNumber, differenceNum);
+				nowDisplay = 1;
+				//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
+				SetTimer(hWnd, 2, 1000, NULL);
+			}
 		}
 
 		break;
@@ -568,10 +568,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			hOldFont = (HFONT)SelectObject(memdc, hFont);
 			login(memdc, hWnd);
 
-			GetDlgItemText(hWnd, IDC_EDIT1, name, 100);
-			GetDlgItemText(hWnd, IDC_EDIT2, studentNumber, 100);
+			GetDlgItemText(hWnd, IDC_EDIT1, studentNumber, 100);
+			GetDlgItemText(hWnd, IDC_EDIT2, name, 100);
 			if (name[0] != '\0' && studentNumber[0] != '\0')
 				signIn(memdc);
+			if (wcslen(studentNumber) == 10 && wcCheck == FALSE) {
+				SetFocus(NameList);
+				wcCheck = TRUE;
+			}
+			else if(wcslen(studentNumber) != 10 && wcCheck == TRUE)
+				wcCheck = FALSE;
 	
 			
 
