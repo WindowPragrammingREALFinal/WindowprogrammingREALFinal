@@ -13,6 +13,8 @@ void Result(HDC memdc, int score, int slide, HWND hWnd) // 결과창 애니메이션도 �
 	Rectangle(memdc, ClientRECT.left, (ClientRECT.bottom / 5) * 2, slide, (ClientRECT.bottom / 5) * 2 + 3);
 	Rectangle(memdc, ClientRECT.right - slide, (ClientRECT.bottom / 5) * 3, ClientRECT.right, (ClientRECT.bottom / 5) * 3 + 3);
 
+
+
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 }

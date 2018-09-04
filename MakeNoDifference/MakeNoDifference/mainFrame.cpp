@@ -142,6 +142,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int openTime = 0;
 	static BOOL startPicture = TRUE;
 	static BOOL incorrect = FALSE;
+	static BOOL startButton = FALSE;
 	static BOOL open = FALSE;
 	static BOOL ClickOn = TRUE;
 	static BOOL bottomOn = FALSE;
@@ -255,6 +256,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 			if (isTime > 0)
 				isTime -= 1;
+
+			if (isTime == 0) {
+				nowDisplay = 2;
+				slideLeft = 0;
+				isTime = 0;
+				SetTimer(hWnd, 6, 100, NULL);
+				saveData(score, name, studentNumber);
+				KillTimer(hWnd, 2);
+			}
 			break;
 
 		case 3: 
@@ -432,6 +442,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						slideLeft = 0;
 						isTime = 0;
 						SetTimer(hWnd, 6, 100, NULL);
+						saveData(score, name, studentNumber);
 						KillTimer(hWnd, 2);
 					}
 				}
@@ -439,7 +450,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 3) {
-			if ((clickX > 1483 && clickX < 1674) && (clickY > 879 && clickY < 925)) {
+			if ((clickX > 1483 && clickX < 1674) && (clickY > 879 && clickY < 925) && startButton == TRUE) {
 				DestroyWindow(confirm);
 				DestroyWindow(NameList);
 				DestroyWindow(StudentNumberList);
@@ -570,8 +581,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 			GetDlgItemText(hWnd, IDC_EDIT1, studentNumber, 100);
 			GetDlgItemText(hWnd, IDC_EDIT2, name, 100);
-			if (name[0] != '\0' && studentNumber[0] != '\0')
+			if (name[0] != '\0' && studentNumber[0] != '\0') {
 				signIn(memdc);
+				startButton = TRUE;
+			}
+			else
+				startButton = FALSE;
+
 			if (wcslen(studentNumber) == 10 && wcCheck == FALSE) {
 				SetFocus(NameList);
 				wcCheck = TRUE;
