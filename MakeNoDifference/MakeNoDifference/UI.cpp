@@ -33,56 +33,30 @@ void scoreImageLoad(int score)
 
 void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 {
-	int temp;
-	CImage score[6];
+	WCHAR LoadText[100]; 
+	
 	RECT ClientRECT;
+	HBRUSH hBrush, oldBrush;
+	HFONT hFont, oldFont;
 	GetClientRect(hWnd, &ClientRECT);
-	WCHAR LoadText[1000];
 
 
-	if (Totalscore >= 100000)
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", tempScore / 100000, tempScore / 100000, count);
-	else
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", tempScore / 100000, tempScore / 100000, 6);
-	score[0].Load(LoadText);
-	temp = Totalscore % 100000;
 
-	if(Totalscore >= 10000)
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10000, temp / 10000, count);
-	else
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10000, temp / 10000, 6);
-	score[1].Load(LoadText);
-	temp %= 10000;
+	RECT temp_rect = ClientRECT; // 임시 렉트(점수 출력용)
+	temp_rect.left = ClientRECT.right / 2 + 570;
+	temp_rect.right = ClientRECT.right - 100;
+	temp_rect.top = ClientRECT.top + 20;
+	temp_rect.bottom = ClientRECT.top + 80;
 
-	if(Totalscore >= 1000)
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 1000, temp / 1000, count);
-	else
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 1000, temp / 1000, 6);
-	score[2].Load(LoadText);
-	temp %= 1000;
+	SetTextColor(memdc, RGB(255, 255, 255));
+	hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
+	oldFont = (HFONT)SelectObject(memdc, hFont);
+	SetBkMode(memdc, TRANSPARENT);
+	wsprintf(LoadText, L"%d", Totalscore);
+	DrawText(memdc, LoadText, wcslen(LoadText), &temp_rect, DT_CENTER || DT_VCENTER);
 
-	if(Totalscore >= 100)
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 100, temp / 100, count);
-	else
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 100, temp / 100, 6);
-	score[3].Load(LoadText);
-	temp %= 100;
-
-	if(Totalscore >= 10)
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10, temp / 10, count);
-	else
-		wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp / 10, temp / 10, 6);
-	score[4].Load(LoadText);
-	temp %= 10;
-
-	wsprintf(LoadText, L"ScoreNumber\\%d\\%d_%d.png", temp, temp, count);
-	score[5].Load(LoadText);
-
-
-	for (int i = 0; i < 6; ++i)
-		score[i].Draw(memdc, ClientRECT.right / 2 + (i * 32) + 750, ClientRECT.top + 25, 32, 32, 0, 0, 64, 64);
-	for(int i = 0; i < 6; ++i)
-		score[i].Destroy();
+	DeleteObject(hFont);
+	DeleteObject(oldFont);
 }
 
 void Start(HDC memdc, int moveX, HWND hWnd) //임시로 만들어둔 로그인 시작버튼
@@ -342,7 +316,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 
 
 
-void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // 화면 중앙부 상단에 위치한 남은 틀린갯수(+ 삼각형, 사각형의 디자인
+void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int slideX) // 화면 중앙부 상단에 위치한 남은 틀린갯수(+ 삼각형, 사각형의 디자인
 {
 	CImage remainImage;
 	RECT ClientRECT;
@@ -358,30 +332,30 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // 화면 중앙부 상단
 
 	leftTop[0].x = ClientRECT.left;
 	leftTop[0].y = ClientRECT.top;
-	leftTop[1].x = ClientRECT.left + 140;
+	leftTop[1].x = ClientRECT.left + 140 + slideX;
 	leftTop[1].y = ClientRECT.top;
 	leftTop[2].x = ClientRECT.left;
-	leftTop[2].y = ClientRECT.top + 160;
+	leftTop[2].y = ClientRECT.top + 160 + slideY;
 
 	leftBottom[0].x = ClientRECT.left;
 	leftBottom[0].y = ClientRECT.bottom;
-	leftBottom[1].x = ClientRECT.left + 121;
+	leftBottom[1].x = ClientRECT.left + 121 + slideX;
 	leftBottom[1].y = ClientRECT.bottom;
 	leftBottom[2].x = ClientRECT.left;
-	leftBottom[2].y = ClientRECT.top + 900;
+	leftBottom[2].y = ClientRECT.top + 900 - slideY;
 
 	rightTop[0].x = ClientRECT.right;
 	rightTop[0].y = ClientRECT.top;
-	rightTop[1].x = ClientRECT.left + 1782;
+	rightTop[1].x = ClientRECT.left + 1782 - slideX;
 	rightTop[1].y = ClientRECT.top;
 	rightTop[2].x = ClientRECT.right;
-	rightTop[2].y = ClientRECT.top + 160;
+	rightTop[2].y = ClientRECT.top + 160 + slideY;
 
 	rightBottom[0].x = ClientRECT.right;
 	rightBottom[0].y = ClientRECT.bottom;
 	rightBottom[1].x = ClientRECT.right;
-	rightBottom[1].y = ClientRECT.top + 900;
-	rightBottom[2].x = ClientRECT.right - 121;
+	rightBottom[1].y = ClientRECT.top + 900 - slideY;
+	rightBottom[2].x = ClientRECT.right - 121 - slideX;
 	rightBottom[2].y = ClientRECT.bottom;
 
 	wsprintf(LoadText, L"BG\\UI_Remain.png");
@@ -389,25 +363,25 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb) // 화면 중앙부 상단
 	remainImage.Draw(memdc, ClientRECT.right / 2 - 73, ClientRECT.top, 146, 135 + (2 * ((double)(ClientRECT.right / 2 - 120) / 96)) - 25, 0, 0, 146, 160);
 	remainImage.Destroy();
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, leftTop, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, leftBottom, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, rightBottom, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 127, GetGValue(rgb) - 127, GetBValue(rgb) - 127));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, rightTop, 3);
 	DeleteObject(hBrush);
@@ -521,8 +495,8 @@ void signIn(HDC memdc)
 {
 	CImage signIn;
 	WCHAR LoadText[1000];
-	wsprintf(LoadText, L"BG\\UI_Start.png");
+	wsprintf(LoadText, L"BG\\UI_BT_START.png");
 	signIn.Load(LoadText);
-	signIn.Draw(memdc, 1483, 879, 191, 46, 0, 0, 191, 46);
+	signIn.Draw(memdc, 1543, 396, 256, 256, 0, 0, 256, 256);
 	signIn.Destroy();
 }

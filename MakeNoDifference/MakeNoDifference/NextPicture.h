@@ -7,3 +7,7 @@
 int nextNumber();
 
 int differenceNumber(int number);
+
+void countReset();
+
+void clearMap();

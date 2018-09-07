@@ -10,7 +10,7 @@
 #include "shutdown.h"
 #include "Result.h"
 #include "NextPicture.h"
-#include <math.h>
+
 
 #define PI 3.141592654 
 #define ExitWindows(dwReserved, Code) ExitWindowsEx(EWX_LOGOFF, 0xFFFFFFFF)
@@ -78,9 +78,9 @@ static int Left, Right, Top, Bottom;
 static int nowDisplay = 0; //어떤 화면을 표시하고 있을지를 결정
 
 struct timeBarRGB {
-	int r = 107;
-	int g = 186;
-	int b = 77;
+	int r = 0;
+	int g = 136;
+	int b = 187;
 
 	BOOL Rbool = FALSE;
 	BOOL Gbool = FALSE;
@@ -105,7 +105,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int differenceNum = 0;
 	static int aniCount = 1;
 	static int slideLeft = 0;
-
+	static int temp_score = 0;
+	static int startSlideY;
+	static int startSlideX;
+	static BOOL startSlideCheck = FALSE;
 	static int scoreAnimationCount = 0;
 	static BOOL scoreOn = FALSE;
 
@@ -123,8 +126,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	
 	static COLORREF bottomRGB;
 	static bottomBarRGB brgb;
-	
-	
+	static COLORREF scoreRGB;
+	static timeBarRGB sc;
+
 	static HPEN myPen;
 	static HGDIOBJ oldPen;
 	PAINTSTRUCT ps;
@@ -174,7 +178,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Top = ClientRect.top;
 		Bottom = ClientRect.bottom;
 
-
+		startSlideY = ClientRect.bottom / 2;
+		startSlideX = ClientRect.right / 2;
 
 		
 	
@@ -200,18 +205,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (moveX >= 0)
 						moveX--;
 				}
+				if (temp_score < score)
+					temp_score++;
+
 				if (bottomOn == TRUE) {
 					if (brgb.check == TRUE) {
 						if (brgb.count < 6) {
-						//	brgb.r += 1;
-						//	brgb.g += 1;
+							//	brgb.r += 1;
+							//	brgb.g += 1;
 							brgb.b += 25;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-						//	brgb.r -= 1;
-						//	brgb.g -= 1;
-							brgb.b -= 25;	
+							//	brgb.r -= 1;
+							//	brgb.g -= 1;
+							brgb.b -= 25;
 							brgb.count++;
 						}
 						else {
@@ -222,14 +230,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					else {
 						if (brgb.count < 6) {
 							brgb.r += 25;
-						//	brgb.g += 1;
-						//	brgb.b += 1;
+							//	brgb.g += 1;
+							//	brgb.b += 1;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
 							brgb.r -= 25;
-						//	brgb.g -= 1;
-						//	brgb.b -= 1;
+							//	brgb.g -= 1;
+							//	brgb.b -= 1;
 							brgb.count++;
 						}
 						else {
@@ -238,9 +246,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						}
 					}
 				}
+
+
 				bottomRGB = RGB(brgb.r, brgb.g, brgb.b);
 			}
-		
 			else if (nowDisplay == 2) {
 				if (slideLeft < ClientRect.right) {
 					slideLeft += acc * isTime;
@@ -252,7 +261,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 					temp_time++;
 
-					if ((temp_time % 30 == 0)&&(score_digit<1000000))
+					if ((temp_time % 30 == 0) && (score_digit < 1000000))
 					{
 						if (score_digit != 1000000)
 							score_digit = score_digit * 10;
@@ -260,16 +269,62 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 
 				}
+
+				if (sc.Rbool == FALSE) {
+					sc.r += 7;
+					if (sc.r >= 255 - 9)
+						sc.Rbool = TRUE;
+				}
+				else if (sc.Rbool == TRUE) {
+					sc.r -= 7;
+					if (sc.r <= 9)
+						sc.Rbool = FALSE;
+				}
+
+				if (sc.Gbool == FALSE) {
+					sc.g += 3;
+					if (sc.g >= 255 - 5)
+						sc.Gbool = TRUE;
+				}
+				else if (sc.Gbool == TRUE) {
+					sc.g -= 3;
+					if (sc.g <= 5)
+						sc.Gbool = FALSE;
+				}
+
+				if (sc.Bbool == FALSE) {
+					sc.b += 5;
+					if (sc.b >= 255 - 7)
+						sc.Bbool = TRUE;
+				}
+				else if (sc.Bbool == TRUE) {
+					sc.b -= 5;
+					if (sc.b <= 7)
+						sc.Bbool = FALSE;
+				}
+			}
+			scoreRGB = RGB(sc.r, sc.g, sc.b);
+
+			if (startSlideCheck == TRUE) {
+				if (startSlideY > 0)
+					startSlideY -= 10;
+				else if(startSlideY <= 0)
+					startSlideY = 0;
+
+				if (startSlideX > 0)
+					startSlideX -= 20;
+				else if (startSlideX <= 0)
+					startSlideX = 0;
 			}
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case 2:
 
-			rgb.r += 1;
-			if(rgb.g > 2)
-				rgb.g -= 2;
-			if(rgb.b > 0)
+			rgb.r += 2;
+	/*		if(rgb.g - 107 > 0)
+				rgb.g -= 1;*/
+			if(rgb.b - 140 > 0)
 				rgb.b -= 1;
 			
 			if (isTime > 0)
@@ -279,6 +334,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				nowDisplay = 2;
 				slideLeft = 0;
 				isTime = 0;
+				LoadRestartButton();
+				LoadScoreBG();
 				SetTimer(hWnd, 6, 100, NULL);
 				saveData(score, name, studentNumber);
 				KillTimer(hWnd, 2);
@@ -409,10 +466,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		
 		}
-
-		/*else if (wParam == 'Q') {
-			ShutdownSystem(ShutdownTimeout, L"시스템을 종료합니다.", 128, TRUE, FALSE);
-		}*/
 		break;
 
 	case WM_CHAR:
@@ -465,6 +518,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						nowDisplay = 2;
 						slideLeft = 0;
 						isTime = 0;
+						LoadScoreBG();
+						LoadRestartButton();
 						SetTimer(hWnd, 6, 100, NULL);
 						saveData(score, name, studentNumber);
 						KillTimer(hWnd, 2);
@@ -486,7 +541,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		else if (nowDisplay == 3) {
-			if ((clickX > 1483 && clickX < 1674) && (clickY > 879 && clickY < 925) && startButton == TRUE) {
+			if ((clickX > 1543 && clickX < 1543 + 256) && (clickY > 396 && clickY < 396 + 256) && startButton == TRUE) {
 				DestroyWindow(confirm);
 				DestroyWindow(NameList);
 				DestroyWindow(StudentNumberList);
@@ -494,6 +549,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				load = TRUE;
 				LoadCImagePicture(pictureNumber, differenceNum);
 				nowDisplay = 1;
+				startSlideCheck = TRUE;
 				//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 				SetTimer(hWnd, 2, 1000, NULL);
 			}
@@ -595,34 +651,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 
 			
-			remain(memdc, correct, hWnd, bottomRGB);
+			remain(memdc, correct, hWnd, bottomRGB, startSlideY, startSlideX);
 			
 			if(scoreOn == FALSE)
-				scoreImage(memdc, hWnd, score, 6);
+				scoreImage(memdc, hWnd, temp_score, 6);
 			else if(scoreOn == TRUE)
-				scoreImage(memdc, hWnd, score, scoreAnimationCount);
+				scoreImage(memdc, hWnd, temp_score, scoreAnimationCount);
 
 			HFONT hFont, oldFont;
 			hFont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
 			oldFont = (HFONT)SelectObject(memdc, hFont);
 
 			
-			WCHAR checkcheckcheckcheck[1000];
+		/*	WCHAR checkcheckcheckcheck[1000];
 			wsprintf(checkcheckcheckcheck, L"%d", pictureNumber);
-			TextOut(memdc, (ClientRect.left + ClientRect.right) / 2, (ClientRect.top + ClientRect.bottom) / 2, checkcheckcheckcheck, wcslen(checkcheckcheckcheck));
+			TextOut(memdc, (ClientRect.left + ClientRect.right) / 2, (ClientRect.top + ClientRect.bottom) / 2, checkcheckcheckcheck, wcslen(checkcheckcheckcheck));*/
 
 			DeleteObject(hFont);
 			DeleteObject(oldFont);
 		}
 
 		else if (nowDisplay == 2) {
-
-			Result(memdc, score,   name, studentNumber,slideLeft, score_digit, return_but_on, hWnd);
+			DrawScoreBG(memdc, hWnd);
+			Result(memdc, score, name, studentNumber,slideLeft, score_digit, return_but_on, hWnd, scoreRGB);
 		}
 
 		else if (nowDisplay == 3) {
 			hFont = CreateFont(400, 400, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 255, 255, 255, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼엑스포"));
 			hOldFont = (HFONT)SelectObject(memdc, hFont);
+
 			login(memdc, hWnd);
 
 			GetDlgItemText(hWnd, IDC_EDIT1, studentNumber, 100);

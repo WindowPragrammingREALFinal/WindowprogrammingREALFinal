@@ -60,3 +60,9 @@ void countReset()
 {
 	count = 0;
 }
+
+void clearMap()
+{
+	for (int i = 0; i < 18; ++i)
+		saveNumber[i] = 0;
+}

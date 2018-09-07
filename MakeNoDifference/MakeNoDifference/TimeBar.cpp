@@ -31,9 +31,9 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	vert[1].y = (ClientRECT.right / 2 - 50) + 82;
 
 	// 그라데이션의 끝색상를 명시한다.
-	vert[1].Red = GetRValue(rgb) << 8;
-	vert[1].Green = GetGValue(rgb) << 8;
-	vert[1].Blue = GetBValue(rgb) << 8;
+	vert[1].Red = GetRValue(rgb) << 8; 
+	vert[1].Green = GetGValue(rgb) - 105 << 8;
+	vert[1].Blue = GetBValue(rgb) -73 << 8;
 	vert[1].Alpha = 0xFFFFFF;
 
 	gtr.UpperLeft = 0;

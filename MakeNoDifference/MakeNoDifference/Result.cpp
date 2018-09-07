@@ -1,16 +1,63 @@
 #include "Result.h"
 
-void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide, int score_digit,bool return_but_on,HWND hWnd) // 결과창 애니메이션도 있음
+CImage ScoreBG;
+CImage restart;
+
+void LoadScoreBG()
+{
+	WCHAR LoadText[1000];
+	wsprintf(LoadText, L"Result_Button\\5.png");
+	ScoreBG.Load(LoadText);
+}
+
+
+void DrawScoreBG(HDC memdc, HWND hWnd)
+{
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+
+	ScoreBG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom);
+}
+
+void ScoreBGDestroy()
+{
+	ScoreBG.Destroy();
+}
+
+void LoadRestartButton()
+{
+	WCHAR LoadText[1000];
+	wsprintf(LoadText, L"Result_Button\\button.png");
+	restart.Load(LoadText);
+}
+
+void DrawRestartButton(HDC memdc, HWND hWnd)
+{
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+
+	restart.Draw(memdc, 820, 760, 256, 256);
+}
+
+void DestroyRestartButton()
+{
+	restart.Destroy();
+}
+
+
+void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide, int score_digit, bool return_but_on, HWND hWnd, COLORREF rgb) // 결과창 애니메이션도 있음
 {
 	
 	RECT ClientRECT;
 	HBRUSH hBrush, oldBrush;
 	WCHAR LoadText[100];
-	HFONT hFont,oldFont;
-	int temp_score = score% (score_digit/10);
+	HFONT hFont, oldFont;
+	int temp_score = score % (score_digit / 10);
 	GetClientRect(hWnd, &ClientRECT);
 
-	RECT temp_rect = ClientRECT;
+
+
+	RECT temp_rect = ClientRECT; // 임시 렉트(점수 출력용)
 	temp_rect.top = (ClientRECT.bottom / 5) * 2 + 70;
 	temp_rect.bottom = (ClientRECT.bottom / 5) * 3;
 
@@ -23,13 +70,15 @@ void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide
 	
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
-
+	
+	
 	if (score_digit > 10)
 	{
-		SetTextColor(memdc, RGB(113, 203, 230));                                                                                   // 점수 RGB 조정
+		SetTextColor(memdc, RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb)));                                                                                   // 점수 RGB 조정
 		hFont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
 		oldFont = (HFONT)SelectObject(memdc, hFont);
 
+		SetBkMode(memdc, TRANSPARENT);
 		wsprintf(LoadText, L"%d", temp_score);
 		DrawText(memdc, LoadText, wcslen(LoadText), &temp_rect, DT_CENTER || DT_VCENTER);
 
@@ -46,9 +95,10 @@ void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide
 		hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
 		oldFont = (HFONT)SelectObject(memdc, hFont);
 
+		SetBkMode(memdc, TRANSPARENT);
 		wsprintf(LoadText, L"%s / %s", name,studentNumber);
 		DrawText(memdc, LoadText, wcslen(LoadText), &temp_rect, DT_CENTER || DT_VCENTER);
-
+		DrawRestartButton(memdc, hWnd);
 		DeleteObject(hFont);
 		DeleteObject(oldFont);
 

@@ -10,7 +10,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 
 BOOL openScreenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight);
 
-void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb);
+void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slide, int slideX);
 
 void Start(HDC memdc, int moveX, HWND hWnd);
 
