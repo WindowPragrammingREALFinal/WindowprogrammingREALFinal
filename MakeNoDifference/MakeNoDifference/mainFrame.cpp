@@ -108,10 +108,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int temp_score = 0;
 	static int startSlideY;
 	static int startSlideX;
+	static int correct = 0;
+	static int Life = 5;
+	static int openTime = 0;
 	static BOOL startSlideCheck = FALSE;
 	static int scoreAnimationCount = 0;
 	static BOOL scoreOn = FALSE;
-
+	static BOOL startPicture = TRUE;
+	static BOOL incorrect = FALSE;
+	static BOOL startButton = FALSE;
+	static BOOL open = FALSE;
+	static BOOL ClickOn = TRUE;
+	static BOOL bottomOn = FALSE;
+	static BOOL load = TRUE;
+	static BOOL scoreAnimation = FALSE;
+	static BOOL wcCheck = FALSE;
 	static double acc = 1;
 	static BOOL chil = FALSE;
 	
@@ -141,18 +152,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static HWND confirm, NameList, StudentNumberList;
 
 	static RECT ClientRect;
-	static int correct = 0;
-	static int Life = 5;
-	static int openTime = 0;
-	static BOOL startPicture = TRUE;
-	static BOOL incorrect = FALSE;
-	static BOOL startButton = FALSE;
-	static BOOL open = FALSE;
-	static BOOL ClickOn = TRUE;
-	static BOOL bottomOn = FALSE;
-	static BOOL load = TRUE;
-	static BOOL scoreAnimation = FALSE;
-	static BOOL wcCheck = FALSE;
+	
+
 
 	static BOOL egg = FALSE;
 	static char totalScore[1000];
@@ -211,15 +212,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (bottomOn == TRUE) {
 					if (brgb.check == TRUE) {
 						if (brgb.count < 6) {
-							//	brgb.r += 1;
-							//	brgb.g += 1;
-							brgb.b += 25;
+							brgb.r -= 40;
+							brgb.g -= 40;
+							//brgb.b -= 25;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							//	brgb.r -= 1;
-							//	brgb.g -= 1;
-							brgb.b -= 25;
+							brgb.r -= 40;
+							brgb.g -= 40;
+							//brgb.b += 25;
 							brgb.count++;
 						}
 						else {
@@ -229,15 +230,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					else {
 						if (brgb.count < 6) {
-							brgb.r += 25;
-							//	brgb.g += 1;
-							//	brgb.b += 1;
+							//brgb.r += 25;
+							brgb.g -= 40;
+							brgb.b -= 40;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r -= 25;
-							//	brgb.g -= 1;
-							//	brgb.b -= 1;
+							//brgb.r -= 25;
+							brgb.g += 40;
+							brgb.b += 40;
 							brgb.count++;
 						}
 						else {
@@ -531,12 +532,50 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			if (return_but_on == true)  
 			{
-				
-				//if ((clickX > /****/ && clickX < /****/) && (clickY > /****/ && clickY < /****/)){   //뒤로가기 버튼 좌표
-			
+				//(820, 760)
+				if ((clickX > 820 && clickX < 820 + 256) && (clickY > 760 && clickY < 760 + 256)){   //뒤로가기 버튼 좌표
 				     //버튼 클릭시 
-
-				//}
+					return_but_on = false;
+					isTime = 96;
+					score = 0;
+					pictureNumber = 0;
+					differenceNum = 0;
+					aniCount = 1;
+					slideLeft = 0;
+					temp_score = 0;
+					startSlideY = ClientRect.bottom / 2;
+					startSlideX = ClientRect.right / 2;
+					correct = 0;
+					Life = 5;
+					openTime = 0;
+					score_digit = 10;
+					startSlideCheck = FALSE;
+					scoreAnimationCount = 0;
+					scoreOn = FALSE;
+					startPicture = TRUE;
+					incorrect = FALSE;
+					startButton = FALSE;
+					open = FALSE;
+					ClickOn = TRUE;
+					bottomOn = FALSE;
+					load = TRUE;
+					scoreAnimation = FALSE;
+					wcCheck = FALSE;
+					acc = 1;
+					chil = FALSE;
+					nowCount = 0;
+					moveX = 0;
+					moveSquare = FALSE;
+					DestoryCimage();
+					DestroyRestartButton();
+					ScoreBGDestroy();
+					SetTimer(hWnd, 5, 1, NULL);
+					nowDisplay = 0;
+					clearMap();
+					countReset();
+					pictureNumber = nextNumber();
+					differenceNum = differenceNumber(pictureNumber);
+				}
 			
 			}
 		}
@@ -673,7 +712,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		else if (nowDisplay == 2) {
 			DrawScoreBG(memdc, hWnd);
-			Result(memdc, score, name, studentNumber,slideLeft, score_digit, return_but_on, hWnd, scoreRGB);
+			Result(memdc, score, name, studentNumber,slideLeft, score_digit, &return_but_on, hWnd, scoreRGB);
 		}
 
 		else if (nowDisplay == 3) {
