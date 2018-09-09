@@ -74,8 +74,8 @@ void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide
 	
 	if (score_digit > 10)
 	{
-		SetTextColor(memdc, RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb)));                                                                                   // 점수 RGB 조정
-		hFont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
+		SetTextColor(memdc, RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb))); // 점수 RGB 조정
+		hFont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));   // 점수 폰트 조정
 		oldFont = (HFONT)SelectObject(memdc, hFont);
 
 		SetBkMode(memdc, TRANSPARENT);
@@ -88,10 +88,10 @@ void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide
 
 	if (score_digit >= 100000)
 	{
-		temp_rect.top = (ClientRECT.bottom / 5) * 3 + 20;                                                                       //학번,이름 위치 조정
+		temp_rect.top = (ClientRECT.bottom / 5) * 3 + 20;     //학번,이름 위치 조정
 		temp_rect.bottom = (ClientRECT.bottom / 5) * 4;
 
-		SetTextColor(memdc, RGB(113, 203, 230));                                                                                // 학번,이름 RGB 조정
+		SetTextColor(memdc, RGB(113, 203, 230));      // 학번,이름 RGB 조정
 		hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
 		oldFont = (HFONT)SelectObject(memdc, hFont);
 

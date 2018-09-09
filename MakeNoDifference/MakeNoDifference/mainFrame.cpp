@@ -182,7 +182,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		startSlideY = ClientRect.bottom / 2;
 		startSlideX = ClientRect.right / 2;
 
-		
+		BGLoad();
+		bottomBarLoad();
 	
 
 		SetTimer(hWnd, 1, 1, NULL);
@@ -218,8 +219,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r -= 40;
-							brgb.g -= 40;
+							brgb.r += 40;
+							brgb.g += 40;
 							//brgb.b += 25;
 							brgb.count++;
 						}
@@ -537,6 +538,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				     //버튼 클릭시 
 					return_but_on = false;
 					isTime = 96;
+
+					rgb.r = 0;
+					rgb.b = 136;
+					rgb.b = 187;
+
 					score = 0;
 					pictureNumber = 0;
 					differenceNum = 0;
@@ -589,6 +595,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				LoadCImagePicture(pictureNumber, differenceNum);
 				nowDisplay = 1;
 				startSlideCheck = TRUE;
+				BGDestroy();
+				bottomBarDestroy();
+				BGLoad();
+				bottomBarLoad();
 				//	LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 				SetTimer(hWnd, 2, 1000, NULL);
 			}
@@ -621,8 +631,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 
 		else if (nowDisplay == 1) {
-			BG(memdc, hWnd);
-			bottomBar(memdc, bottomRGB, hWnd);
+			BGDraw(memdc, hWnd);
+		
 			hBrush = CreateSolidBrush(RGB(50, 100, 153));
 			oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 			DeleteObject(oldBrush);
@@ -689,7 +699,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right);
 			}
 
-			
+			bottomBar(memdc, bottomRGB, hWnd);
+			HFONT hFont, oldFont;
+			hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
+			oldFont = (HFONT)SelectObject(memdc, hFont);
 			remain(memdc, correct, hWnd, bottomRGB, startSlideY, startSlideX);
 			
 			if(scoreOn == FALSE)
@@ -697,9 +710,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			else if(scoreOn == TRUE)
 				scoreImage(memdc, hWnd, temp_score, scoreAnimationCount);
 
-			HFONT hFont, oldFont;
-			hFont = CreateFont(80, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
-			oldFont = (HFONT)SelectObject(memdc, hFont);
+		
 
 			
 		/*	WCHAR checkcheckcheckcheck[1000];

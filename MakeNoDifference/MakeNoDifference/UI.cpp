@@ -360,7 +360,7 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int sli
 
 	wsprintf(LoadText, L"BG\\UI_Remain.png");
 	remainImage.Load(LoadText);
-	remainImage.Draw(memdc, ClientRECT.right / 2 - 73, ClientRECT.top, 146, 135 + (2 * ((double)(ClientRECT.right / 2 - 120) / 96)) - 25, 0, 0, 146, 160);
+	remainImage.Draw(memdc, 863, 0, 174, 173, 0, 0,174, 173);
 	remainImage.Destroy();
 
 	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
@@ -401,92 +401,70 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int sli
 
 
 	wsprintf((LPWSTR)difference, TEXT("%d"), 5 - correct);
-	SetBkColor(memdc, RGB(255, 255, 255));
-	TextOut(memdc, ClientRECT.right / 2 - 7, ClientRECT.top + 55, (LPWSTR)difference ,1);
+	SetBkMode(memdc, TRANSPARENT);
+	TextOut(memdc, ClientRECT.right / 2 - 10, ClientRECT.top + 55, (LPWSTR)difference ,1);
 
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 }
 
+CImage BG;
 
-void BG(HDC memdc, HWND hWnd)
+void BGLoad()
 {
-	CImage BG;
-	RECT ClientRECT;
 	WCHAR LoadText[1000];
-	GetClientRect(hWnd, &ClientRECT);
-
-	wsprintf(LoadText, L"BG\\UI_01.png");
+	wsprintf(LoadText, L"BG\\배경.png");
 	BG.Load(LoadText);
-	BG.Draw(memdc, ClientRECT.left, ClientRECT.top + 82, ClientRECT.right, 82 + (ClientRECT.right / 2 - 50), 0, 0, 1920, 1080);
+}
+
+void BGDraw(HDC memdc, HWND hWnd)
+{
+	
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+	BG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom , 0, 0, 1920, 1080);
+}
+
+void BGDestroy()
+{
 	BG.Destroy();
+}
+
+CImage UI_Bar;
+
+void bottomBarLoad()
+{
+	WCHAR LoadText[1000];
+	wsprintf(LoadText, L"BG\\상하단.png");
+	UI_Bar.Load(LoadText);
 }
 
 void bottomBar(HDC memdc, COLORREF rgb, HWND hWnd) //하단부에 위치하며 틀린부분은 찾거나 잘못 골랐을 경우 그라데이션으로 색깔을 나타내며 표시해줌
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
-	WCHAR LoadText[1000];
-	//TRIVERTEX vert[2];
-	//GRADIENT_RECT gtr;
-	//static HBRUSH hBrush, oldBrush;
+	
+	UI_Bar.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom, 0, 0, 1920, 1080);
+}
 
-	//
-	//
-
-	//vert[0].x = ClientRECT.left;
-	//vert[0].y = ClientRECT.top + (ClientRECT.right / 2 - 50) + 82;
-
-	//// 그라데이션의 끝색상를 명시한다.
-	//vert[0].Red = GetRValue(rgb) << 8;
-	//vert[0].Green = GetGValue(rgb) << 8;
-	//vert[0].Blue = GetBValue(rgb) << 8;
-	//vert[0].Alpha = 0x000000;
-
-	//vert[1].x = ClientRECT.right;
-	//vert[1].y = ClientRECT.bottom;
-
-	//// 그라데이션의 시작색상을 명시한다.
-	//vert[1].Red = 0xFFFFFF;
-	//vert[1].Green = 0xFFFFFF;
-	//vert[1].Blue = 0xFFFFFF;
-	//vert[1].Alpha = 0xFFFFFF;
-
-	//gtr.UpperLeft = 0;
-	//gtr.LowerRight = 1;
-
-	//GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
-
-	//hBrush = CreateSolidBrush(RGB(255, 255, 255));
-	//oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	//Rectangle(memdc, ClientRECT.left, ClientRECT.top + 82 + (ClientRECT.right / 2 - 50), ClientRECT.right, ClientRECT.top + 85 + (ClientRECT.right / 2 - 50));
-
-	//DeleteObject(hBrush);
-	//DeleteObject(oldBrush);
-//	DeleteObject(vert);
-//	DeleteObject(&gtr);
-	CImage topBar;
-	CImage BottomBar;
-	wsprintf(LoadText, L"BG\\UI_UDbar2.png");
-	BottomBar.Load(LoadText);
-	BottomBar.Draw(memdc, ClientRECT.left, ClientRECT.top + (ClientRECT.right / 2 - 50) + 80, ClientRECT.right, (ClientRECT.bottom) - (ClientRECT.top + (ClientRECT.right / 2 - 50) + 66),0, 0, 1920, 120);
-	BottomBar.Destroy();
-
-	wsprintf(LoadText, L"BG\\UI_UPbar2.png");
-	topBar.Load(LoadText);
-	topBar.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, 82, 0, 0, 1920, 102);
-	topBar.Destroy();
+void bottomBarDestroy()
+{
+	UI_Bar.Destroy();
 }
 
 void login(HDC memdc, HWND hWnd)
 {
+	CImage login;
 	CImage loginBG;
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
 	WCHAR LoadText[1000];
-
+	WCHAR LoadText2[1000];
+	wsprintf(LoadText2, L"Title\\TITLE_89.png");
 	wsprintf(LoadText, L"BG\\UI_login.png");
 	loginBG.Load(LoadText);
+	login.Load(LoadText2);
+	login.AlphaBlend(memdc, ClientRECT, ClientRECT, 0, 255);
 	loginBG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom, 0, 0, 1920, 1080);
 	loginBG.Destroy();
 }

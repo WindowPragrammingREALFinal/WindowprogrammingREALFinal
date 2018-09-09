@@ -10,7 +10,10 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	static HBRUSH hBrush, oldBrush;
 	HPEN myPen;
 	HGDIOBJ oldPen;
-
+	CImage timeStone;
+	WCHAR timeston[1000];
+	wsprintf(timeston, L"time\\Time_button.png");
+	timeStone.Load(timeston);
 //===========================================================================그라데이션 시작지==========
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
@@ -41,8 +44,7 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 
 	// 가로 방향의 시작지점부터 중앙지점까지 그라데이션 효과를 준다.
 	GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
-	
-	
+
 
 
 
@@ -52,6 +54,10 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	LineTo(memdc, ClientRECT.right / 2 - 2, ClientRECT.bottom);
 	myPen = CreatePen(PS_NULL, 0, RGB(255, 255, 255));
 	oldPen = SelectObject(memdc, myPen);
+
+	timeStone.Draw(memdc, half - 32, 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96) - 25, 64, 63, 0, 0, 64, 63);
+	timeStone.Destroy();
+
 	
 //=====================================================================================================================
 	time[0].x = half - 25;
@@ -89,7 +95,7 @@ void TimeBar(HDC memdc, double isTime, HINSTANCE g_hinst, double width, double h
 	
 	hBrush = CreateSolidBrush(RGB(50, 50, 235));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	Polygon(memdc, time, 4);
+	//Polygon(memdc, time, 4);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
