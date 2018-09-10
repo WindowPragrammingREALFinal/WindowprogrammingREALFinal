@@ -11,3 +11,5 @@ int differenceNumber(int number);
 void countReset();
 
 void clearMap();
+
+void nowStage(HDC memdc, HWND hWnd);

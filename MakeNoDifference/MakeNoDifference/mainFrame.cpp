@@ -644,7 +644,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			DeleteObject(hBrush);
 			LoadPicture(memdc, g_hinst, ClientRect.left, ClientRect.top, ClientRect.right, ClientRect.bottom, pictureNumber, load);
 			load = FALSE;
-		//	Health(memdc, Life);
+		//	
 	
 			if (correct != 0) {
 				correctAnimation(memdc, correct, g_hinst, ClientRect.right);
@@ -700,6 +700,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 
 			bottomBar(memdc, bottomRGB, hWnd);
+			Health(memdc, Life);
+			nowStage(memdc, hWnd);
 			HFONT hFont, oldFont;
 			hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
 			oldFont = (HFONT)SelectObject(memdc, hFont);

@@ -6,7 +6,7 @@ void Health(HDC memdc, int Life) //화면의 좌상단 남은 체력 표시
 	WCHAR LoadText[1000];
 	WCHAR LoadText2[1000];
 
-	wsprintf(LoadText, L"Health\\helth.png");
+	wsprintf(LoadText, L"Health\\하트.png");
 	wsprintf(LoadText2, L"Health\\helth2.png");
 
 	for (int i = 0; i < 5; ++i) {
@@ -18,7 +18,7 @@ void Health(HDC memdc, int Life) //화면의 좌상단 남은 체력 표시
 
 	}
 	for (int i = 0; i < 5; ++i) {
-		health[i].Draw(memdc, i * 50, 10, 50, 50, 0, 0, 50, 50);
+		health[i].Draw(memdc, (i + 1) * 82 + 40, 5	, 82, 5 + 83, 0, 0, 82, 83);
 		health[i].Destroy();
 	}
 }

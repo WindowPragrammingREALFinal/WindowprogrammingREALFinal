@@ -56,6 +56,16 @@ int differenceNumber(int number)
 	return result;
 }
 
+void nowStage(HDC memdc, HWND hWnd)
+{
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+	WCHAR is_stage[100];
+	wsprintf(is_stage, L"Stage %d", count);
+	SetBkMode(memdc, TRANSPARENT);
+	TextOut(memdc, ClientRECT.left + 100, ClientRECT.bottom - 50, is_stage, wcslen(is_stage));
+}
+
 void countReset()
 {
 	count = 0;
