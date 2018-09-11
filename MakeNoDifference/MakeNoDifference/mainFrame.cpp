@@ -172,6 +172,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	//result.cpp에서 이용
 	static int score_digit = 10;
 	static bool return_but_on = false;
+	static bool is_resultbg_ani_on = true;
+	static int resultbg_time = 0; //알파블랜드 속도
 
 	switch (iMessage) {
 	case WM_CREATE:
@@ -251,18 +253,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 
-
 				bottomRGB = RGB(brgb.r, brgb.g, brgb.b);
 			}
 			else if (nowDisplay == 2) {
-				if (slideLeft < ClientRect.right) {
+				if (is_resultbg_ani_on == true)
+				{
+					//결과창 배경 알파블랜드 속도 조정
+					if (resultbg_time == 250)
+						resultbg_time = 255;
+					else
+						resultbg_time+=10;
+					
+					if (resultbg_time ==255 )
+						is_resultbg_ani_on = false;
+				}
+				else if (slideLeft < ClientRect.right) {
 					slideLeft += acc * isTime;
 					isTime++;
 				}
 				else
 				{
 					static int temp_time = 1;
-
 					temp_time++;
 
 					if ((temp_time % 30 == 0) && (score_digit < 1000000))
@@ -271,7 +282,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							score_digit = score_digit * 10;
 						temp_time = 1;
 					}
-
 				}
 
 				if (sc.Rbool == FALSE) {
@@ -739,9 +749,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			DeleteObject(oldFont);
 		}
 
+		//결과창
 		else if (nowDisplay == 2) {
-			DrawScoreBG(memdc, hWnd);
-			Result(memdc, score, name, studentNumber,slideLeft, score_digit, &return_but_on, hWnd, scoreRGB);
+			DrawScoreBG(memdc, hWnd,resultbg_time);
+
+			if (is_resultbg_ani_on == false)
+				Result(memdc, score, name, studentNumber, slideLeft, score_digit, &return_but_on, hWnd, scoreRGB);
+
+			int i = 0;
+			
+			if (is_resultbg_ani_on == true)
+				i = 1;
+			else
+				i = 0;
+			WCHAR tt[1000];
+			wsprintf(tt, L"%d, %d", resultbg_time, i);
+			TextOut(memdc, 0, 0, tt,wcslen(tt));
 		}
 
 		else if (nowDisplay == 3) {

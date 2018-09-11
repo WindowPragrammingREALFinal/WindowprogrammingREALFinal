@@ -1,4 +1,8 @@
+#pragma once
 #include "Result.h"
+#include <iostream>
+#include <fstream>
+
 
 CImage ScoreBG;
 CImage restart;
@@ -11,12 +15,29 @@ void LoadScoreBG()
 }
 
 
-void DrawScoreBG(HDC memdc, HWND hWnd)
+void DrawScoreBG(HDC memdc, HWND hWnd, int resultbg_time)
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
+	HBITMAP resultbg_bmp, old_bmp;
+	HDC mem2dc = CreateCompatibleDC(memdc);
 
-	ScoreBG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom);
+	resultbg_bmp = (HBITMAP)LoadImage(NULL, L"BG\\UI_RESULT.bmp", IMAGE_BITMAP,0, 0, LR_LOADFROMFILE);
+	old_bmp = (HBITMAP)SelectObject(mem2dc, resultbg_bmp);
+
+	_BLENDFUNCTION bf;
+	bf.BlendOp = AC_SRC_OVER;
+	bf.BlendFlags = 0;
+	bf.AlphaFormat = 0;
+	bf.SourceConstantAlpha = resultbg_time;
+
+	AlphaBlend(memdc, 0, 0, ClientRECT.right, ClientRECT.bottom, mem2dc, 0, 0, ClientRECT.right, ClientRECT.bottom, bf);
+	//ScoreBG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom); //Cimage ¹è°æ 
+
+	SelectObject(mem2dc, old_bmp);
+	DeleteDC(mem2dc);
+	DeleteObject(resultbg_bmp);
+	DeleteObject(old_bmp);
 }
 
 void ScoreBGDestroy()

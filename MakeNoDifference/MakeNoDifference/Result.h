@@ -9,7 +9,7 @@ void saveData(int score, WCHAR name[100], WCHAR studentNumber[20]);
 
 void LoadScoreBG();
 
-void DrawScoreBG(HDC memdc, HWND hWnd);
+void DrawScoreBG(HDC memdc, HWND hWnd,int resultbg_time);
 
 void ScoreBGDestroy();
 
