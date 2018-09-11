@@ -1,24 +1,34 @@
 #include "UI.h"
 
-void Health(HDC memdc, int Life) //화면의 좌상단 남은 체력 표시
+
+static int temp = 5;
+
+void resetTemp()
+{
+	temp = 5;
+}
+
+void Health(HDC memdc, int Life, int count) //화면의 좌상단 남은 체력 표시
 {
 	CImage health[5];
 	WCHAR LoadText[1000];
 	WCHAR LoadText2[1000];
 
-	wsprintf(LoadText, L"Health\\하트.png");
-	wsprintf(LoadText2, L"Health\\helth2.png");
 
-	for (int i = 0; i < 5; ++i) {
+	wsprintf(LoadText, L"Health\\하트.png");
+	wsprintf(LoadText2, L"Health\\Dead\\health_%d.png", count);
+
+	if (count == 9)
+		temp = Life;
+
+	for (int i = 0; i < temp; ++i) {
 		if (i < Life)
 			health[i].Load(LoadText);
 		else
 			health[i].Load(LoadText2);
-
-
 	}
-	for (int i = 0; i < 5; ++i) {
-		health[i].Draw(memdc, (i + 1) * 82 + 40, 5	, 82, 5 + 83, 0, 0, 82, 83);
+	for (int i = 0; i < temp; ++i) {
+		health[i].Draw(memdc, (i + 1) * 70 + 40, 0, 100, 5 + 100, 0, 0, 128, 128);
 		health[i].Destroy();
 	}
 }
@@ -52,7 +62,8 @@ void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 	hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
 	oldFont = (HFONT)SelectObject(memdc, hFont);
 	SetBkMode(memdc, TRANSPARENT);
-	wsprintf(LoadText, L"%d", Totalscore);
+	//wsprintf(LoadText, L"%d", Totalscore);
+	wsprintf(LoadText, L"%d, %d", ClientRECT.right, ClientRECT.bottom);
 	DrawText(memdc, LoadText, wcslen(LoadText), &temp_rect, DT_CENTER || DT_VCENTER);
 
 	DeleteObject(hFont);
@@ -201,12 +212,27 @@ BOOL openScreenAnimation(HDC memdc, int left, int right, int top, int bottom, in
 	return check;
 }
 
-BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight)//틀린그림 5개를 다맞추고 화면 전환에 쓰임
+CImage BackGround;
+
+void LoadBack()
+{
+	WCHAR LoadText[1000];
+	wsprintf(LoadText, L"BG\\배경.png");
+	BackGround.Load(LoadText);
+}
+
+void DeleteBack()
+{
+	BackGround.Destroy();
+}
+
+BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight, HWND hWnd)//틀린그림 5개를 다맞추고 화면 전환에 쓰임
 {
 	BOOL check = FALSE;
 	
 	if (right < totalRight / 4) {
 		Rectangle(memdc, left, top - 2, right, top + bottom / 5 + 2);
+		//----------------------------------------------------------------------------------------------------------
 
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - right, top - 2, left + (clientRight / 2) + totalRight + 20, top + bottom / 5 + 2);
 	}
@@ -214,6 +240,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 	else if (right >= totalRight / 4 && right < (totalRight / 4) * 2) {
 		Rectangle(memdc, left, top - 2, right, top + bottom / 5 + 2);
 		Rectangle(memdc, left, top - 2 + (bottom / 5), right - (totalRight / 4) + 50, top + bottom / 5 * 2 + 2);
+
 
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - right, top - 2, left + (clientRight / 2) + totalRight + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - (right - (totalRight / 4)), top - 2 + ((bottom / 5) * 1) , left + (clientRight / 2) + totalRight + 20, top + bottom / 5 * 2 + 2);
@@ -223,6 +250,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		Rectangle(memdc, left, top - 2, right, top + bottom / 5 + 2);
 		Rectangle(memdc, left, top - 2 + (bottom / 5), right - (totalRight / 4) + 17, top + bottom / 5 * 2 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 2), right - ((totalRight / 4) * 2) + 17, top + bottom / 5 * 3 + 2);
+
 
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - right, top - 2, left + (clientRight / 2) + totalRight + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - (right - (totalRight / 4)), top - 2 + ((bottom / 5) * 1), left + (clientRight / 2) + totalRight + 20, top + bottom / 5 * 2 + 2);
@@ -235,6 +263,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 2), right - ((totalRight / 4) * 2) + 17, top + bottom / 5 * 3 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 3), right - ((totalRight / 4) * 3) + 17, top + bottom / 5 * 4 + 2);
 
+
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - right, top - 2, left + (clientRight / 2) + totalRight + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - (right - (totalRight / 4)), top - 2 + ((bottom / 5) * 1), left + (clientRight / 2) + totalRight + 20, top + bottom / 5 * 2 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - (right - ((totalRight / 4) * 2)), top - 2 + ((bottom / 5) * 2), left + (clientRight / 2) + totalRight + 20, top + bottom / 5 * 3 + 2);
@@ -246,6 +275,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 2), right - ((totalRight / 4) * 2) + 17, top + bottom / 5 * 3 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 3), right - ((totalRight / 4) * 3) + 17, top + bottom / 5 * 4 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 4), right - ((totalRight / 4) * 4) + 17, top + bottom / 5 * 5 + 4);
+
 
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2, left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - (right - (totalRight / 4)), top - 2 + ((bottom / 5) * 1), left + (clientRight / 2) + totalRight + 20, top + bottom / 5 * 2 + 2);
@@ -261,6 +291,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 3), right - ((totalRight / 4) * 3) + 17, top + bottom / 5 * 4 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 4), right - ((totalRight / 4) * 4) + 17, top + bottom / 5 * 5 + 4);
 
+
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2, left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2 + (bottom / 5), left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 * 2 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2) + totalRight - (right - ((totalRight / 4) * 2)), top - 2 + ((bottom / 5) * 2), left + (clientRight / 2) + totalRight + 20, top + bottom / 5 * 3 + 2);
@@ -275,6 +306,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 3), right - ((totalRight / 4) * 3) + 17, top + bottom / 5 * 4 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 4), right - ((totalRight / 4) * 4) + 17, top + bottom / 5 * 5 + 4);
 
+
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2, left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2 + (bottom / 5), left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 * 2 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2 + ((bottom / 5) * 2), left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 * 3 + 2);
@@ -288,6 +320,7 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 2), totalRight + 17 + 2, top + bottom / 5 * 3 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 3), totalRight + 17 + 2, top + bottom / 5 * 4 + 2);
 		Rectangle(memdc, left, top - 2 + ((bottom / 5) * 4), right - ((totalRight / 4) * 4) + 17, top + bottom / 5 * 5 + 4);
+
 
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2, left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 + 2);
 		Rectangle(memdc, left + 15 + (clientRight / 2), top - 2  + (bottom / 5), left + (clientRight / 2) + totalRight + 2 + 20, top + bottom / 5 * 2 + 2);

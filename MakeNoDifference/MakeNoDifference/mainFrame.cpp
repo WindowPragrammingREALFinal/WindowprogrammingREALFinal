@@ -108,6 +108,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int temp_score = 0;
 	static int startSlideY;
 	static int startSlideX;
+	static int healthAnimation = 0; // 하트 터질때 애니메이션
 	static int correct = 0;
 	static int Life = 5;
 	static int openTime = 0;
@@ -184,6 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		BGLoad();
 		bottomBarLoad();
+		LoadBack();
 	
 
 		SetTimer(hWnd, 1, 1, NULL);
@@ -372,9 +374,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				KillTimer(hWnd, 6);
 			}
 			break;
-		case 7:  //결과창 모션용 타이머 꼬여서 그냥 새로 추가
+		case 7:  // 하트 터지는 애니메이션
 		{
-
+			healthAnimation++;
+			if (healthAnimation == 10) {
+				healthAnimation = 0;
+				KillTimer(hWnd, 7);
+			}
 
 			break;
 		}
@@ -499,6 +505,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (checkDifference(clickX, clickY, correct, ClientRect.right)) {
 					correct++;
 					score += 10;
+					brgb.r = 192;
+					brgb.g = 192;
+					brgb.b = 192;
 					bottomOn = TRUE;
 					scoreOn = TRUE;
 					SetTimer(hWnd, 6, 1, NULL);
@@ -511,11 +520,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				else {
+					brgb.r = 192;
+					brgb.g = 192;
+					brgb.b = 192;
 					bottomOn = TRUE;
 					brgb.check = FALSE;
 					incorrect = TRUE;
 					aniCount = 1;
 					Life--;
+					SetTimer(hWnd, 7, 10, NULL);
 					if (Life == 0) {
 						nowDisplay = 2;
 						slideLeft = 0;
@@ -542,7 +555,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					rgb.r = 0;
 					rgb.b = 136;
 					rgb.b = 187;
-
+					brgb.r = 192;
+					brgb.g = 192;
+					brgb.b = 192;
 					score = 0;
 					pictureNumber = 0;
 					differenceNum = 0;
@@ -552,6 +567,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					startSlideY = ClientRect.bottom / 2;
 					startSlideX = ClientRect.right / 2;
 					correct = 0;
+					resetTemp();
 					Life = 5;
 					openTime = 0;
 					score_digit = 10;
@@ -667,7 +683,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			DeleteObject(hBrush);
 			if (correct == 5 && open == FALSE) {
 				KillTimer(hWnd, 2);
-				if (screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right)) {
+				if (screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right, hWnd)) {
 					pictureNumber = nextNumber();
 					differenceNum = differenceNumber(pictureNumber);
 					correct = 0;
@@ -696,11 +712,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				else 
-					screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right);
+					screenAnimation(memdc, ClientRect.left + 17, slideLeft + 17, ClientRect.top + 82, ClientRect.right / 2 - 50, ClientRect.right / 2 - 50, ClientRect.right, hWnd);
 			}
 
 			bottomBar(memdc, bottomRGB, hWnd);
-			Health(memdc, Life);
+			Health(memdc, Life, healthAnimation);
 			nowStage(memdc, hWnd);
 			HFONT hFont, oldFont;
 			hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정

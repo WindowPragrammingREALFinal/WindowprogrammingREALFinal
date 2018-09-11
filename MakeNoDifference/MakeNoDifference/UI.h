@@ -2,11 +2,11 @@
 #include <Windows.h>
 #include <atlImage.h>
 
-void Health(HDC memdc, int Life);
+void Health(HDC memdc, int Life, int count);
 
 //void Result(HDC memdc, int score, int slide, HWND hWnd);
 
-BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight);
+BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight, HWND hWnd);
 
 BOOL openScreenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight);
 
@@ -27,3 +27,8 @@ void BGDestroy();
 void login(HDC memdc, HWND hWnd);
 
 void signIn(HDC memdc);
+
+void LoadBack();
+void DeleteBack();
+
+void resetTemp();
