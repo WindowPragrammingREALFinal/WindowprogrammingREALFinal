@@ -19,10 +19,11 @@ void DrawScoreBG(HDC memdc, HWND hWnd, int resultbg_time)
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
-	HBITMAP resultbg_bmp, old_bmp;
+	static HBITMAP resultbg_bmp= (HBITMAP)LoadImage(NULL, L"BG\\UI_RESULT.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	HBITMAP old_bmp;
 	HDC mem2dc = CreateCompatibleDC(memdc);
 
-	resultbg_bmp = (HBITMAP)LoadImage(NULL, L"BG\\UI_RESULT.bmp", IMAGE_BITMAP,0, 0, LR_LOADFROMFILE);
+	//resultbg_bmp = (HBITMAP)LoadImage(NULL, L"BG\\UI_RESULT.bmp", IMAGE_BITMAP,0, 0, LR_LOADFROMFILE);
 	old_bmp = (HBITMAP)SelectObject(mem2dc, resultbg_bmp);
 
 	_BLENDFUNCTION bf;
@@ -36,7 +37,7 @@ void DrawScoreBG(HDC memdc, HWND hWnd, int resultbg_time)
 
 	SelectObject(mem2dc, old_bmp);
 	DeleteDC(mem2dc);
-	DeleteObject(resultbg_bmp);
+	//DeleteObject(resultbg_bmp);
 	DeleteObject(old_bmp);
 }
 

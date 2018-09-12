@@ -266,7 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					else
 						resultbg_time+=5;
 					
-					resultbg_time+=10;
+
 					
 					if (resultbg_time ==255 )
 						is_resultbg_ani_on = false;
@@ -771,7 +771,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		//°á°úÃ¢
 		else if (nowDisplay == 2) {
 			DrawScoreBG(memdc, hWnd, resultbg_time);
-			DrawScoreBG(memdc, hWnd,resultbg_time);
 			if (is_resultbg_ani_on == false)
 				Result(memdc, score, name, studentNumber, slideLeft, score_digit, &return_but_on, hWnd, scoreRGB);
 
