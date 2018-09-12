@@ -32,3 +32,7 @@ void LoadBack();
 void DeleteBack();
 
 void resetTemp();
+
+void TempLoad();
+void TempDraw(HDC memdc, int moveY, HWND hWnd);
+void TempDestroy();

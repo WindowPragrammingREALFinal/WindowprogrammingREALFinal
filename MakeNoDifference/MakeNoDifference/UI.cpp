@@ -62,8 +62,8 @@ void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 	hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
 	oldFont = (HFONT)SelectObject(memdc, hFont);
 	SetBkMode(memdc, TRANSPARENT);
-	//wsprintf(LoadText, L"%d", Totalscore);
-	wsprintf(LoadText, L"%d, %d", ClientRECT.right, ClientRECT.bottom);
+	wsprintf(LoadText, L"%d", Totalscore);
+	//wsprintf(LoadText, L"%d, %d", ClientRECT.right, ClientRECT.bottom);
 	DrawText(memdc, LoadText, wcslen(LoadText), &temp_rect, DT_CENTER || DT_VCENTER);
 
 	DeleteObject(hFont);
@@ -485,19 +485,38 @@ void bottomBarDestroy()
 	UI_Bar.Destroy();
 }
 
+
+CImage logp;
+
+void TempLoad()
+{
+	WCHAR LoadText2[1000];
+	wsprintf(LoadText2, L"Title\\TITLE_89.png");
+	logp.Load(LoadText2);
+}
+
+void TempDraw(HDC memdc, int moveY, HWND hWnd)
+{
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+	logp.Draw(memdc, 0, 0 - moveY, 1920, 1080, 0, 0, 1920, 1080 );
+}
+
+void TempDestroy()
+{
+	logp.Destroy();
+}
+
 void login(HDC memdc, HWND hWnd)
 {
-	CImage login;
 	CImage loginBG;
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
 	WCHAR LoadText[1000];
-	WCHAR LoadText2[1000];
-	wsprintf(LoadText2, L"Title\\TITLE_89.png");
+	
+
 	wsprintf(LoadText, L"BG\\UI_login.png");
 	loginBG.Load(LoadText);
-	login.Load(LoadText2);
-	login.AlphaBlend(memdc, ClientRECT, ClientRECT, 0, 255);
 	loginBG.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom, 0, 0, 1920, 1080);
 	loginBG.Destroy();
 }

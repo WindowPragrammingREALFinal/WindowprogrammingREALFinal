@@ -130,6 +130,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int nowCount = 0;
 
 	static int moveX = 0;
+	static int tempMoveX = 0;
+	static int temp = 0;
 	static BOOL moveSquare = FALSE;
 
 
@@ -188,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		BGLoad();
 		bottomBarLoad();
 		LoadBack();
-	
+		TempLoad();
 
 		SetTimer(hWnd, 1, 1, NULL);
 		SetTimer(hWnd, 5, 1, NULL);
@@ -262,7 +264,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (resultbg_time == 250)
 						resultbg_time = 255;
 					else
+<<<<<<< HEAD
+						resultbg_time+=5;
+=======
 						resultbg_time+=10;
+>>>>>>> 2848b64220c9d1ca7ad4d50267cdeb5fdecc7ab3
 					
 					if (resultbg_time ==255 )
 						is_resultbg_ani_on = false;
@@ -330,6 +336,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				else if (startSlideX <= 0)
 					startSlideX = 0;
 			}
+
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
@@ -394,6 +401,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 			break;
 		}
+
+		case 8:
+			if (nowDisplay == 3) {
+				if (tempMoveX < 1080) {
+					tempMoveX += temp;
+					temp += 2;
+				}
+				else {
+					temp = 0;
+					ChildOn = TRUE;
+					KillTimer(hWnd, 8);
+				}
+			}
+			break;
 		}
 		break;
 
@@ -463,10 +484,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		if (nowDisplay == 0) {
 			nowDisplay = 3;
-
-			
-			StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 660, 418, 410, 35, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
-			NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 1010, 662, 410, 35, hWnd, (HMENU)IDC_EDIT2, g_hInst, NULL);
+			SetTimer(hWnd, 8, 1, NULL);
 
 		}
 		
@@ -561,7 +579,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				     //버튼 클릭시 
 					return_but_on = false;
 					isTime = 96;
-
+					resultbg_time = 0;
 					rgb.r = 0;
 					rgb.b = 136;
 					rgb.b = 187;
@@ -581,12 +599,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					Life = 5;
 					openTime = 0;
 					score_digit = 10;
+					tempMoveX = 0;
 					startSlideCheck = FALSE;
 					scoreAnimationCount = 0;
 					scoreOn = FALSE;
 					startPicture = TRUE;
 					incorrect = FALSE;
 					startButton = FALSE;
+					is_resultbg_ani_on = true;
 					open = FALSE;
 					ClickOn = TRUE;
 					bottomOn = FALSE;
@@ -751,7 +771,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		//결과창
 		else if (nowDisplay == 2) {
+<<<<<<< HEAD
+			DrawScoreBG(memdc, hWnd, resultbg_time);
+=======
 			DrawScoreBG(memdc, hWnd,resultbg_time);
+>>>>>>> 2848b64220c9d1ca7ad4d50267cdeb5fdecc7ab3
 
 			if (is_resultbg_ani_on == false)
 				Result(memdc, score, name, studentNumber, slideLeft, score_digit, &return_but_on, hWnd, scoreRGB);
@@ -762,9 +786,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				i = 1;
 			else
 				i = 0;
+<<<<<<< HEAD
+			//WCHAR tt[1000];
+			//wsprintf(tt, L"%d, %d", resultbg_time, i);
+			//TextOut(memdc, 0, 0, tt,wcslen(tt));
+=======
 			WCHAR tt[1000];
 			wsprintf(tt, L"%d, %d", resultbg_time, i);
 			TextOut(memdc, 0, 0, tt,wcslen(tt));
+>>>>>>> 2848b64220c9d1ca7ad4d50267cdeb5fdecc7ab3
 		}
 
 		else if (nowDisplay == 3) {
@@ -772,6 +802,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			hOldFont = (HFONT)SelectObject(memdc, hFont);
 
 			login(memdc, hWnd);
+			TempDraw(memdc, tempMoveX, hWnd);
+
+			if (ChildOn == TRUE) {
+				StudentNumberList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 660, 418, 410, 35, hWnd, (HMENU)IDC_EDIT1, g_hInst, NULL);
+				NameList = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_CENTER | DT_VCENTER, 1010, 662, 410, 35, hWnd, (HMENU)IDC_EDIT2, g_hInst, NULL);
+				ChildOn = FALSE;
+			}
 
 			GetDlgItemText(hWnd, IDC_EDIT1, studentNumber, 100);
 			GetDlgItemText(hWnd, IDC_EDIT2, name, 100);
