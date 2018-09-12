@@ -28,7 +28,7 @@ void Health(HDC memdc, int Life, int count) //화면의 좌상단 남은 체력 표시
 			health[i].Load(LoadText2);
 	}
 	for (int i = 0; i < temp; ++i) {
-		health[i].Draw(memdc, (i + 1) * 70 + 40, 0, 100, 5 + 100, 0, 0, 128, 128);
+		health[i].Draw(memdc, (i + 1) * 82 + 50, 0, 82, 12 + 83, 0, 0, 82, 82);
 		health[i].Destroy();
 	}
 }

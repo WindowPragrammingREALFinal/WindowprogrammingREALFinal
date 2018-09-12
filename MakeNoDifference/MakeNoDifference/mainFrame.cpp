@@ -264,11 +264,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (resultbg_time == 250)
 						resultbg_time = 255;
 					else
-<<<<<<< HEAD
 						resultbg_time+=5;
-=======
-						resultbg_time+=10;
->>>>>>> 2848b64220c9d1ca7ad4d50267cdeb5fdecc7ab3
+					
+					resultbg_time+=10;
 					
 					if (resultbg_time ==255 )
 						is_resultbg_ani_on = false;
@@ -587,6 +585,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					brgb.g = 192;
 					brgb.b = 192;
 					score = 0;
+					resultbg_time = 0;
 					pictureNumber = 0;
 					differenceNum = 0;
 					aniCount = 1;
@@ -771,12 +770,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		//°á°úÃ¢
 		else if (nowDisplay == 2) {
-<<<<<<< HEAD
 			DrawScoreBG(memdc, hWnd, resultbg_time);
-=======
 			DrawScoreBG(memdc, hWnd,resultbg_time);
->>>>>>> 2848b64220c9d1ca7ad4d50267cdeb5fdecc7ab3
-
 			if (is_resultbg_ani_on == false)
 				Result(memdc, score, name, studentNumber, slideLeft, score_digit, &return_but_on, hWnd, scoreRGB);
 
@@ -786,15 +781,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				i = 1;
 			else
 				i = 0;
-<<<<<<< HEAD
 			//WCHAR tt[1000];
 			//wsprintf(tt, L"%d, %d", resultbg_time, i);
 			//TextOut(memdc, 0, 0, tt,wcslen(tt));
-=======
-			WCHAR tt[1000];
-			wsprintf(tt, L"%d, %d", resultbg_time, i);
-			TextOut(memdc, 0, 0, tt,wcslen(tt));
->>>>>>> 2848b64220c9d1ca7ad4d50267cdeb5fdecc7ab3
+			//WCHAR tt[1000];
+			//wsprintf(tt, L"%d, %d", resultbg_time, i);
+			//TextOut(memdc, 0, 0, tt,wcslen(tt));
 		}
 
 		else if (nowDisplay == 3) {
