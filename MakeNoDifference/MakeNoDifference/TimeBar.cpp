@@ -16,13 +16,19 @@ GRADIENT_RECT gtr, gtr2;
 
 static COLORREF tempRGB;
 
+void resetTimerRGB()
+{
+	Gra.r = 60;
+	Gra.g = 67;
+	Gra.b = 120;
+}
 
 void SetTimerGradation(int isTime, int half, HWND hWnd)
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
 
-	if (isTime > 80) {
+	if (isTime > 88) { // 1
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -51,7 +57,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 		// 가로 방향의 시작지점부터 중앙지점까지 그라데이션 효과를 준다.
 	//	GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime > 72 && isTime <= 80) {
+	else if (isTime > 80 && isTime <= 88) { // 2
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -80,7 +86,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 		// 가로 방향의 시작지점부터 중앙지점까지 그라데이션 효과를 준다.
 //		GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime > 64 && isTime <= 72) {
+	else if (isTime > 72 && isTime <= 80) { // 3
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -110,7 +116,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 //		GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 		// 가로 방향의 시작지점부터 중앙지점까지 그라데이션 효과를 준다
 	}
-	else if (isTime > 56 && isTime <= 64) {
+	else if (isTime > 64 && isTime <= 72) { // 4
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -139,7 +145,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 
 //		GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime > 48 && isTime <= 56) {
+	else if (isTime > 56 && isTime <= 64) { // 5
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -168,7 +174,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 
 //		GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime > 40 && isTime <= 48) {
+	else if (isTime > 48 && isTime <= 56) { // 6
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -197,7 +203,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 
 //		GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime < 32 && isTime <= 40) {
+	else if (isTime > 40 && isTime <= 48) { // 7
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -226,7 +232,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 
 //		GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime < 24 && isTime <= 32) {
+	else if (isTime > 32 && isTime <= 40) {// 8
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -255,7 +261,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 
 	//	GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime < 16 && isTime <= 24) {
+	else if (isTime > 24 && isTime <= 32) { // 9
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -284,7 +290,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 
 	//	GradientFill(memdc, vert, 2, &gtr, 1, GRADIENT_FILL_RECT_V);
 	}
-	else if (isTime < 8 && isTime <= 16) {
+	else if (isTime > 16 && isTime <= 24) { // 10
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -311,7 +317,7 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 		Gra.g -= 7;
 		Gra.b -= 8;
 	}
-	else if (isTime < 8) {
+	else if (isTime > 8 && isTime <= 16) { // 11
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
@@ -337,6 +343,29 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 		Gra.r -= 3.625;
 		Gra.g -= 2;
 		Gra.b += 2;
+	}
+	else if (isTime <= 8) {
+		vert[0].x = half - 15;
+		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
+
+		vert[0].Red = GetRValue(tempRGB) << 8;
+		vert[0].Green = GetGValue(tempRGB) << 8;
+		vert[0].Blue = GetBValue(tempRGB) << 8;
+		vert[0].Alpha = 255 << 8;
+
+		// 그라데이션의 끝좌표를 명시한다.
+		vert[1].x = half + 15;
+		//vert[1].y = height + half - 100;
+		vert[1].y = (ClientRECT.right / 2 - 50) + 82;
+
+		// 그라데이션의 끝색상를 명시한다.
+		vert[1].Red = GetRValue(tempRGB) << 8;
+		vert[1].Green = GetGValue(tempRGB) << 8;
+		vert[1].Blue = GetBValue(tempRGB) << 8;
+		vert[1].Alpha = 0xFFFFFF;
+
+		gtr.UpperLeft = 0;
+		gtr.LowerRight = 1;
 	}
 
 	tempRGB = RGB(Gra.r, Gra.g, Gra.b);

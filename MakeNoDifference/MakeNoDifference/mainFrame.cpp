@@ -200,6 +200,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		bottomBarLoad();
 		LoadBack();
 		TempLoad();
+		SetTimerGradation(isTime, ClientRect.right / 2, hWnd);
 
 		SetTimer(hWnd, 1, 1, NULL);
 		SetTimer(hWnd, 5, 1, NULL);
@@ -607,6 +608,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					startSlideX = ClientRect.right / 2;
 					correct = 0;
 					resetTemp();
+					resetTimerRGB();
 					Life = 5;
 					openTime = 0;
 					score_digit = 10;
