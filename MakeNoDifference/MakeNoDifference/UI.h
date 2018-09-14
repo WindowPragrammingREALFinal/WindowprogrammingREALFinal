@@ -36,3 +36,5 @@ void resetTemp();
 void TempLoad();
 void TempDraw(HDC memdc, int moveY, HWND hWnd);
 void TempDestroy();
+
+void InGameUserData(HDC memdc, WCHAR name[100], WCHAR studentNumber[20], HWND hWnd);

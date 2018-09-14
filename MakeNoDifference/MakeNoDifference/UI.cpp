@@ -55,11 +55,11 @@ void scoreImage(HDC memdc, HWND hWnd, int Totalscore, int count)
 	RECT temp_rect = ClientRECT; // 임시 렉트(점수 출력용)
 	temp_rect.left = ClientRECT.right / 2 + 570;
 	temp_rect.right = ClientRECT.right - 100;
-	temp_rect.top = ClientRECT.top + 20;
+	temp_rect.top = ClientRECT.top + 30;
 	temp_rect.bottom = ClientRECT.top + 80;
 
 	SetTextColor(memdc, RGB(255, 255, 255));
-	hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
+	hFont = CreateFont(54, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
 	oldFont = (HFONT)SelectObject(memdc, hFont);
 	SetBkMode(memdc, TRANSPARENT);
 	wsprintf(LoadText, L"%d", Totalscore);
@@ -95,7 +95,8 @@ void Start(HDC memdc, int moveX, HWND hWnd) //임시로 만들어둔 로그인 시작버튼
 	five[2].y = ClientRECT.bottom / 2 + 300;
 	five[3].x = ClientRECT.right / 2 + (moveX * 2);
 	five[3].y = ClientRECT.bottom / 2 + 350;
-	five[4].x = ClientRECT.right / 2 - moveX;
+	five[4].x = ClientRECT.right / 2 - moveX;.
+
 	five[4].y = ClientRECT.bottom / 2 + 350;
 
 	hBrush = CreateSolidBrush(RGB(255, 0, 0));
@@ -353,6 +354,7 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int sli
 {
 	CImage remainImage;
 	RECT ClientRECT;
+	HFONT hFont, oldFont;
 	WCHAR LoadText[1000];
 	static char difference[1000];
 	GetClientRect(hWnd, &ClientRECT);
@@ -419,26 +421,18 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int sli
 	Polygon(memdc, rightTop, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
-	//Rectangle(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right / 2 - 64, ClientRECT.top + 66);
-	//
-	//hBrush = CreateSolidBrush(RGB(170, 170, 170));
-	//oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	//Polygon(memdc, center, 4);
-	//DeleteObject(hBrush);
-	//DeleteObject(oldBrush);
-	//
-	//hBrush = CreateSolidBrush(RGB(GetRValue(rgb) - 35, GetGValue(rgb) - 45, GetBValue(rgb) - 24));
-	//oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-	//Polygon(memdc, right, 3);
-	//Rectangle(memdc, ClientRECT.right / 2 + 64, ClientRECT.top, ClientRECT.right + 2, ClientRECT.top + 66);
 
-
+	hFont = CreateFont(65, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));     // 학번,이름 폰트 조정
+	oldFont = (HFONT)SelectObject(memdc, hFont);
+	SetTextColor(memdc, RGB(255, 255, 255));
 	wsprintf((LPWSTR)difference, TEXT("%d"), 5 - correct);
 	SetBkMode(memdc, TRANSPARENT);
-	TextOut(memdc, ClientRECT.right / 2 - 10, ClientRECT.top + 55, (LPWSTR)difference ,1);
+	TextOut(memdc, ClientRECT.right / 2 - 16, ClientRECT.top + 40, (LPWSTR)difference ,1);
 
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
+	DeleteObject(hFont);
+	DeleteObject(oldFont);
 }
 
 CImage BG;
@@ -499,7 +493,7 @@ void TempDraw(HDC memdc, int moveY, HWND hWnd)
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
-	logp.Draw(memdc, 0, 0 - moveY, 1920, 1080, 0, 0, 1920, 1080 );
+	logp.Draw(memdc, 0, 0 - moveY, ClientRECT.right, ClientRECT.bottom, 0, 0, 1920, 1080 );
 }
 
 void TempDestroy()
@@ -529,4 +523,15 @@ void signIn(HDC memdc)
 	signIn.Load(LoadText);
 	signIn.Draw(memdc, 1543, 396, 256, 256, 0, 0, 256, 256);
 	signIn.Destroy();
+}
+
+void InGameUserData(HDC memdc, WCHAR name[100], WCHAR studentNumber[20], HWND hWnd)
+{
+	RECT ClientRECT;
+	GetClientRect(hWnd, &ClientRECT);
+
+	SetTextColor(memdc, RGB(255, 255, 255));
+	SetBkMode(memdc, TRANSPARENT);
+	TextOut(memdc, ClientRECT.left + 150, ClientRECT.bottom - 50, studentNumber, wcslen(studentNumber));
+	TextOut(memdc, ClientRECT.left + 350, ClientRECT.bottom - 50, name, wcslen(name));
 }

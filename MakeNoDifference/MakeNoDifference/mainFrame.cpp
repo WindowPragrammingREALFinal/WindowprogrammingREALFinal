@@ -264,11 +264,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					if (resultbg_time == 250)
 						resultbg_time = 255;
 					else
-						resultbg_time+=5;
+						resultbg_time += 2;
 					
 
 					
-					if (resultbg_time ==255 )
+					if (resultbg_time == 255)
 						is_resultbg_ani_on = false;
 				}
 				else if (slideLeft < ClientRect.right) {
@@ -404,7 +404,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (nowDisplay == 3) {
 				if (tempMoveX < 1080) {
 					tempMoveX += temp;
-					temp += 2;
+					temp += 5;
 				}
 				else {
 					temp = 0;
@@ -747,6 +747,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			bottomBar(memdc, bottomRGB, hWnd);
 			Health(memdc, Life, healthAnimation);
 			nowStage(memdc, hWnd);
+			InGameUserData(memdc, name, studentNumber, hWnd);
 			HFONT hFont, oldFont;
 			hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
 			oldFont = (HFONT)SelectObject(memdc, hFont);

@@ -61,9 +61,10 @@ void nowStage(HDC memdc, HWND hWnd)
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
 	WCHAR is_stage[100];
+	SetTextColor(memdc, RGB(255, 255, 255));
 	wsprintf(is_stage, L"Stage %d", count);
 	SetBkMode(memdc, TRANSPARENT);
-	TextOut(memdc, ClientRECT.left + 100, ClientRECT.bottom - 50, is_stage, wcslen(is_stage));
+	TextOut(memdc, ClientRECT.right - 300, ClientRECT.bottom - 50, is_stage, wcslen(is_stage));
 }
 
 void countReset()

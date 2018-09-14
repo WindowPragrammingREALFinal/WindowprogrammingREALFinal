@@ -8,7 +8,7 @@ void LoginScreen(HDC memdc, int nowImage, HWND hWnd) //·Î±×ÀÎ Ã¢ ¶ß±âÀü Å¸ÀÌÆ² È
 	WCHAR LoadText[1000];
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
-
+	   
 	wsprintf(LoadText, L"Title\\TITLE_%d.png", nowImage, nowImage);
 	login.Load(LoadText);
 	login.Draw(memdc, ClientRECT.left, ClientRECT.top, ClientRECT.right, ClientRECT.bottom);
