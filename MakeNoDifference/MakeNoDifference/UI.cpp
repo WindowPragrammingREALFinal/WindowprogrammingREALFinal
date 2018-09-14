@@ -28,7 +28,7 @@ void Health(HDC memdc, int Life, int count) //화면의 좌상단 남은 체력 표시
 			health[i].Load(LoadText2);
 	}
 	for (int i = 0; i < temp; ++i) {
-		health[i].Draw(memdc, (i + 1) * 82 + 50, 0, 82, 12 + 83, 0, 0, 82, 82);
+		health[i].Draw(memdc, (i + 1) * 82 + 100, 0, 82, 12 + 83, 0, 0, 82, 82);
 		health[i].Destroy();
 	}
 }
@@ -115,6 +115,10 @@ void Start(HDC memdc, int moveX, HWND hWnd) //임시로 만들어둔 로그인 시작버튼
 BOOL openScreenAnimation(HDC memdc, int left, int right, int top, int bottom, int totalRight, int clientRight) //틀린그림 5개를 다맞추고 화면 전환에 쓰임
 {
 	BOOL check = FALSE;
+	HBRUSH hBrush, oldBrush;
+
+	hBrush = CreateSolidBrush(RGB(50, 100, 153));
+	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 
 	if (right < totalRight / 4) {
 		Rectangle(memdc, left, top - 2, totalRight + 17 + 2, top + bottom / 5 + 2);
@@ -210,6 +214,8 @@ BOOL openScreenAnimation(HDC memdc, int left, int right, int top, int bottom, in
 	else if (right >= (totalRight / 4) * 8)
 		check = TRUE;
 
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
 	return check;
 }
 
@@ -231,6 +237,11 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 {
 	BOOL check = FALSE;
 	
+	HBRUSH hBrush, oldBrush;
+
+	hBrush = CreateSolidBrush(RGB(50, 100, 153));
+	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
+
 	if (right < totalRight / 4) {
 		Rectangle(memdc, left, top - 2, right, top + bottom / 5 + 2);
 		//----------------------------------------------------------------------------------------------------------
@@ -344,53 +355,280 @@ BOOL screenAnimation(HDC memdc, int left, int right, int top, int bottom, int to
 		check = TRUE;
 	}
 
+	DeleteObject(hBrush);
+	DeleteObject(oldBrush);
+
 	return check;
 }
 
 
 
 
-void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int slideX) // 화면 중앙부 상단에 위치한 남은 틀린갯수(+ 삼각형, 사각형의 디자인
+void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int slideX, BOOL check) // 화면 중앙부 상단에 위치한 남은 틀린갯수(+ 삼각형, 사각형의 디자인
 {
+	// 255 174 0
+	// 255 120 0
+	int r = 255;
+	int g = 174;
+	int b = 0;
+	int r2 = 255;
+	int g2 = 120;
+	int b2 = 0;
+
+	COLORREF GradationStart = RGB(r, g, b);
+	COLORREF GradationEnd = RGB(r2, g2, b2);
+
+
 	CImage remainImage;
 	RECT ClientRECT;
 	HFONT hFont, oldFont;
+	TRIVERTEX vert[3], vert2[3], vert3[3], vert4[3];
+	GRADIENT_TRIANGLE rect, rect2, rect3, rect4;
 	WCHAR LoadText[1000];
 	static char difference[1000];
 	GetClientRect(hWnd, &ClientRECT);
 	static HBRUSH hBrush, oldBrush;
-
 	POINT leftTop[3];
 	POINT leftBottom[3];
 	POINT rightTop[3];
 	POINT rightBottom[3];
 
+	if (check == FALSE) {
+		vert[0].x = ClientRECT.left;    // 삼각형의 중앙 상단
+		vert[0].y = ClientRECT.top;
+		vert[0].Red = GetRValue(GradationStart) << 8;
+		vert[0].Green = GetGValue(GradationStart) << 8;
+		vert[0].Blue = GetBValue(GradationStart) << 8;
+		vert[0].Alpha = 0x0000;
+
+		vert[1].x = ClientRECT.left + 200 + 4 + slideX;   // 삼각형의 우측 하단
+		vert[1].y = ClientRECT.top;
+		vert[1].Red = GetRValue(GradationStart) << 8;
+		vert[1].Green = GetGValue(GradationStart) << 8;
+		vert[1].Blue = GetBValue(GradationStart) << 8;
+		vert[1].Alpha = 0x0000;
+
+		vert[2].x = ClientRECT.left;    // 삼각형의 좌측 하단
+		vert[2].y = ClientRECT.top + 180 + slideY + 4;
+		vert[2].Red = GetRValue(GradationEnd) << 8;
+		vert[2].Green = GetGValue(GradationEnd) << 8;
+		vert[2].Blue = GetBValue(GradationEnd) << 8;
+		vert[2].Alpha = 0x0000;
+
+		rect.Vertex1 = 0;
+		rect.Vertex2 = 1;
+		rect.Vertex3 = 2;
+
+		vert2[0].x = ClientRECT.left;    // 삼각형의 중앙 상단
+		vert2[0].y = ClientRECT.bottom;
+		vert2[0].Red = GetRValue(GradationStart) << 8;
+		vert2[0].Green = GetGValue(GradationStart) << 8;
+		vert2[0].Blue = GetBValue(GradationStart) << 8;
+		vert2[0].Alpha = 0x0000;
+
+		vert2[1].x = ClientRECT.left + 200 + 4 + slideX;  // 삼각형의 우측 하단
+		vert2[1].y = ClientRECT.bottom;
+		vert2[1].Red = GetRValue(GradationStart) << 8;
+		vert2[1].Green = GetGValue(GradationStart) << 8;
+		vert2[1].Blue = GetBValue(GradationStart) << 8;
+		vert2[1].Alpha = 0x0000;
+
+		vert2[2].x = ClientRECT.left;    // 삼각형의 좌측 하단
+		vert2[2].y = ClientRECT.bottom - 180 - 4 - slideY;
+		vert2[2].Red = GetRValue(GradationEnd) << 8;
+		vert2[2].Green = GetGValue(GradationEnd) << 8;
+		vert2[2].Blue = GetBValue(GradationEnd) << 8;
+		vert2[2].Alpha = 0x0000;
+
+		rect2.Vertex1 = 0;
+		rect2.Vertex2 = 1;
+		rect2.Vertex3 = 2;
+
+		vert3[0].x = ClientRECT.right;    // 삼각형의 중앙 상단
+		vert3[0].y = ClientRECT.top;
+		vert3[0].Red = GetRValue(GradationStart) << 8;
+		vert3[0].Green = GetGValue(GradationStart) << 8;
+		vert3[0].Blue = GetBValue(GradationStart) << 8;
+		vert3[0].Alpha = 0x0000;
+
+		vert3[1].x = ClientRECT.right - 200 - 4 - slideX; // 삼각형의 우측 하단
+		vert3[1].y = ClientRECT.top;
+		vert3[1].Red = GetRValue(GradationStart) << 8;
+		vert3[1].Green = GetGValue(GradationStart) << 8;
+		vert3[1].Blue = GetBValue(GradationStart) << 8;
+		vert3[1].Alpha = 0x0000;
+
+		vert3[2].x = ClientRECT.right;  // 삼각형의 좌측 하단
+		vert3[2].y = ClientRECT.top + 180 + 4 + slideY;
+		vert3[2].Red = GetRValue(GradationEnd) << 8;
+		vert3[2].Green = GetGValue(GradationEnd) << 8;
+		vert3[2].Blue = GetBValue(GradationEnd) << 8;
+		vert3[2].Alpha = 0x0000;
+
+		rect3.Vertex1 = 0;
+		rect3.Vertex2 = 1;
+		rect3.Vertex3 = 2;
+
+		vert4[0].x = ClientRECT.right;    // 삼각형의 중앙 상단
+		vert4[0].y = ClientRECT.bottom;
+		vert4[0].Red = GetRValue(GradationStart) << 8;
+		vert4[0].Green = GetGValue(GradationStart) << 8;
+		vert4[0].Blue = GetBValue(GradationStart) << 8;
+		vert4[0].Alpha = 0x0000;
+
+		vert4[1].x = ClientRECT.right; // 삼각형의 우측 하단
+		vert4[1].y = ClientRECT.bottom - 180 - 4 - slideY;
+		vert4[1].Red = GetRValue(GradationEnd) << 8;
+		vert4[1].Green = GetGValue(GradationEnd) << 8;
+		vert4[1].Blue = GetBValue(GradationEnd) << 8;
+		vert4[1].Alpha = 0x0000;
+
+		vert4[2].x = ClientRECT.right - 200 - 4 - slideX;  // 삼각형의 좌측 하단
+		vert4[2].y = ClientRECT.bottom;
+		vert4[2].Red = GetRValue(GradationStart) << 8;
+		vert4[2].Green = GetGValue(GradationStart) << 8;
+		vert4[2].Blue = GetBValue(GradationStart) << 8;
+		vert4[2].Alpha = 0x0000;
+
+		rect4.Vertex1 = 0;
+		rect4.Vertex2 = 1;
+		rect4.Vertex3 = 2;
+	}
+
+	else if (check == TRUE) {
+		vert[0].x = ClientRECT.left;    // 삼각형의 중앙 상단
+		vert[0].y = ClientRECT.top;
+		vert[0].Red = GetRValue(GradationEnd) << 8;
+		vert[0].Green = GetGValue(GradationEnd) << 8;
+		vert[0].Blue = GetBValue(GradationEnd) << 8;
+		vert[0].Alpha = 0x0000;
+
+		vert[1].x = ClientRECT.left + 200 + 4 + slideX;   // 삼각형의 우측 하단
+		vert[1].y = ClientRECT.top;
+		vert[1].Red = GetRValue(GradationStart) << 8;
+		vert[1].Green = GetGValue(GradationStart) << 8;
+		vert[1].Blue = GetBValue(GradationStart) << 8;
+		vert[1].Alpha = 0x0000;
+
+		vert[2].x = ClientRECT.left;    // 삼각형의 좌측 하단
+		vert[2].y = ClientRECT.top + 180 + slideY + 4;
+		vert[2].Red = GetRValue(GradationEnd) << 8;
+		vert[2].Green = GetGValue(GradationEnd) << 8;
+		vert[2].Blue = GetBValue(GradationEnd) << 8;
+		vert[2].Alpha = 0x0000;
+
+		rect.Vertex1 = 0;
+		rect.Vertex2 = 1;
+		rect.Vertex3 = 2;
+
+		vert2[0].x = ClientRECT.left;    // 삼각형의 중앙 상단
+		vert2[0].y = ClientRECT.bottom;
+		vert2[0].Red = GetRValue(GradationEnd) << 8;
+		vert2[0].Green = GetGValue(GradationEnd) << 8;
+		vert2[0].Blue = GetBValue(GradationStart) << 8;
+		vert2[0].Alpha = 0x0000;
+
+		vert2[1].x = ClientRECT.left + 200 + 4 + slideX;  // 삼각형의 우측 하단
+		vert2[1].y = ClientRECT.bottom;
+		vert2[1].Red = GetRValue(GradationStart) << 8;
+		vert2[1].Green = GetGValue(GradationStart) << 8;
+		vert2[1].Blue = GetBValue(GradationStart) << 8;
+		vert2[1].Alpha = 0x0000;
+
+		vert2[2].x = ClientRECT.left;    // 삼각형의 좌측 하단
+		vert2[2].y = ClientRECT.bottom - 180 - 4 - slideY;
+		vert2[2].Red = GetRValue(GradationEnd) << 8;
+		vert2[2].Green = GetGValue(GradationEnd) << 8;
+		vert2[2].Blue = GetBValue(GradationEnd) << 8;
+		vert2[2].Alpha = 0x0000;
+
+		rect2.Vertex1 = 0;
+		rect2.Vertex2 = 1;
+		rect2.Vertex3 = 2;
+
+		vert3[0].x = ClientRECT.right;    // 삼각형의 중앙 상단
+		vert3[0].y = ClientRECT.top;
+		vert3[0].Red = GetRValue(GradationStart) << 8;
+		vert3[0].Green = GetGValue(GradationStart) << 8;
+		vert3[0].Blue = GetBValue(GradationStart) << 8;
+		vert3[0].Alpha = 0x0000;
+
+		vert3[1].x = ClientRECT.right - 200 - 4 - slideX; // 삼각형의 우측 하단
+		vert3[1].y = ClientRECT.top;
+		vert3[1].Red = GetRValue(GradationStart) << 8;
+		vert3[1].Green = GetGValue(GradationStart) << 8;
+		vert3[1].Blue = GetBValue(GradationStart) << 8;
+		vert3[1].Alpha = 0x0000;
+
+		vert3[2].x = ClientRECT.right;  // 삼각형의 좌측 하단
+		vert3[2].y = ClientRECT.top + 180 + 4 + slideY;
+		vert3[2].Red = GetRValue(GradationEnd) << 8;
+		vert3[2].Green = GetGValue(GradationEnd) << 8;
+		vert3[2].Blue = GetBValue(GradationEnd) << 8;
+		vert3[2].Alpha = 0x0000;
+
+		rect3.Vertex1 = 0;
+		rect3.Vertex2 = 1;
+		rect3.Vertex3 = 2;
+
+		vert4[0].x = ClientRECT.right;    // 삼각형의 중앙 상단
+		vert4[0].y = ClientRECT.bottom;
+		vert4[0].Red = GetRValue(GradationStart) << 8;
+		vert4[0].Green = GetGValue(GradationStart) << 8;
+		vert4[0].Blue = GetBValue(GradationStart) << 8;
+		vert4[0].Alpha = 0x0000;
+
+		vert4[1].x = ClientRECT.right; // 삼각형의 우측 하단
+		vert4[1].y = ClientRECT.bottom - 180 - 4 - slideY;
+		vert4[1].Red = GetRValue(GradationEnd) << 8;
+		vert4[1].Green = GetGValue(GradationEnd) << 8;
+		vert4[1].Blue = GetBValue(GradationEnd) << 8;
+		vert4[1].Alpha = 0x0000;
+
+		vert4[2].x = ClientRECT.right - 200 - 4 - slideX;  // 삼각형의 좌측 하단
+		vert4[2].y = ClientRECT.bottom;
+		vert4[2].Red = GetRValue(GradationStart) << 8;
+		vert4[2].Green = GetGValue(GradationStart) << 8;
+		vert4[2].Blue = GetBValue(GradationStart) << 8;
+		vert4[2].Alpha = 0x0000;
+
+		rect4.Vertex1 = 0;
+		rect4.Vertex2 = 1;
+		rect4.Vertex3 = 2;
+	}
+
 	leftTop[0].x = ClientRECT.left;
 	leftTop[0].y = ClientRECT.top;
-	leftTop[1].x = ClientRECT.left + 140 + slideX;
+	leftTop[1].x = ClientRECT.left + 200 + slideX;
 	leftTop[1].y = ClientRECT.top;
 	leftTop[2].x = ClientRECT.left;
-	leftTop[2].y = ClientRECT.top + 160 + slideY;
+	leftTop[2].y = ClientRECT.top + 180 + slideY;
+
+	
 
 	leftBottom[0].x = ClientRECT.left;
 	leftBottom[0].y = ClientRECT.bottom;
-	leftBottom[1].x = ClientRECT.left + 121 + slideX;
+	leftBottom[1].x = ClientRECT.left + 200 + slideX;
 	leftBottom[1].y = ClientRECT.bottom;
 	leftBottom[2].x = ClientRECT.left;
-	leftBottom[2].y = ClientRECT.top + 900 - slideY;
+	leftBottom[2].y = ClientRECT.bottom - 180 - slideY;
+
+	
 
 	rightTop[0].x = ClientRECT.right;
 	rightTop[0].y = ClientRECT.top;
-	rightTop[1].x = ClientRECT.left + 1782 - slideX;
+	rightTop[1].x = ClientRECT.right - 200 - slideX;
 	rightTop[1].y = ClientRECT.top;
 	rightTop[2].x = ClientRECT.right;
-	rightTop[2].y = ClientRECT.top + 160 + slideY;
+	rightTop[2].y = ClientRECT.top + 180 + slideY;
+
+
 
 	rightBottom[0].x = ClientRECT.right;
 	rightBottom[0].y = ClientRECT.bottom;
 	rightBottom[1].x = ClientRECT.right;
-	rightBottom[1].y = ClientRECT.top + 900 - slideY;
-	rightBottom[2].x = ClientRECT.right - 121 - slideX;
+	rightBottom[1].y = ClientRECT.bottom - 180 - slideY;
+	rightBottom[2].x = ClientRECT.right - 200 - slideX;
 	rightBottom[2].y = ClientRECT.bottom;
 
 	wsprintf(LoadText, L"BG\\UI_Remain.png");
@@ -398,25 +636,30 @@ void remain(HDC memdc, int correct, HWND hWnd, COLORREF rgb, int slideY, int sli
 	remainImage.Draw(memdc, 863, 0, 174, 173, 0, 0,174, 173);
 	remainImage.Destroy();
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
+	GradientFill(memdc, vert, 3, &rect, 1, GRADIENT_FILL_TRIANGLE);
+	GradientFill(memdc, vert2, 3, &rect2, 1, GRADIENT_FILL_TRIANGLE);
+	GradientFill(memdc, vert3, 3, &rect3, 1, GRADIENT_FILL_TRIANGLE);
+	GradientFill(memdc, vert4, 3, &rect4, 1, GRADIENT_FILL_TRIANGLE);
+
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb)));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, leftTop, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb)));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, leftBottom, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb)));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, rightBottom, 3);
 	DeleteObject(hBrush);
 	DeleteObject(oldBrush);
 
-	hBrush = CreateSolidBrush(RGB(GetRValue(rgb) + 63, GetGValue(rgb) + 63, GetBValue(rgb) + 63));
+	hBrush = CreateSolidBrush(RGB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb)));
 	oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
 	Polygon(memdc, rightTop, 3);
 	DeleteObject(hBrush);
@@ -507,7 +750,7 @@ void login(HDC memdc, HWND hWnd)
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
 	WCHAR LoadText[1000];
-	
+
 
 	wsprintf(LoadText, L"BG\\UI_login.png");
 	loginBG.Load(LoadText);
@@ -519,8 +762,11 @@ void signIn(HDC memdc)
 {
 	CImage signIn;
 	WCHAR LoadText[1000];
+
 	wsprintf(LoadText, L"BG\\UI_BT_START.png");
 	signIn.Load(LoadText);
+
+	Rectangle(memdc, 1643, 476, 1643 + 80, 476 + 90);
 	signIn.Draw(memdc, 1543, 396, 256, 256, 0, 0, 256, 256);
 	signIn.Destroy();
 }
@@ -532,6 +778,7 @@ void InGameUserData(HDC memdc, WCHAR name[100], WCHAR studentNumber[20], HWND hW
 
 	SetTextColor(memdc, RGB(255, 255, 255));
 	SetBkMode(memdc, TRANSPARENT);
-	TextOut(memdc, ClientRECT.left + 150, ClientRECT.bottom - 50, studentNumber, wcslen(studentNumber));
-	TextOut(memdc, ClientRECT.left + 350, ClientRECT.bottom - 50, name, wcslen(name));
+	TextOut(memdc, ClientRECT.left + 220, ClientRECT.bottom - 50, studentNumber, wcslen(studentNumber));
+	TextOut(memdc, ClientRECT.left + 420, ClientRECT.bottom - 50, name, wcslen(name));
 }
+

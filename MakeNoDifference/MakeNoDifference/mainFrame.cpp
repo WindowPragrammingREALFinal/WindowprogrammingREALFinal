@@ -97,6 +97,14 @@ struct bottomBarRGB {
 	BOOL check = TRUE;
 };
 
+struct remainRGB {
+	int r = 255;
+	int g = 255;
+	int b = 255;
+	int count = 0;
+	BOOL check = TRUE;
+};
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) 
 {
 	static double isTime = 96;
@@ -126,7 +134,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static BOOL wcCheck = FALSE;
 	static double acc = 1;
 	static BOOL chil = FALSE;
-	
+	static BOOL sideOn = FALSE;
+	static BOOL changeOn = FALSE;
 	static int nowCount = 0;
 
 	static int moveX = 0;
@@ -139,7 +148,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static timeBarRGB rgb;
 	
 	static COLORREF bottomRGB;
-	static bottomBarRGB brgb;
+	static remainRGB brgb;
 	static COLORREF scoreRGB;
 	static timeBarRGB sc;
 
@@ -219,15 +228,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (bottomOn == TRUE) {
 					if (brgb.check == TRUE) {
 						if (brgb.count < 6) {
-							brgb.r -= 40;
-							brgb.g -= 40;
-							//brgb.b -= 25;
+							brgb.r -= 35;
+							brgb.g -= 24;
+							brgb.b -= 15;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
-							brgb.r += 40;
-							brgb.g += 40;
-							//brgb.b += 25;
+							brgb.r += 35;
+							brgb.g += 24;
+							brgb.b += 15;
 							brgb.count++;
 						}
 						else {
@@ -238,14 +247,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					else {
 						if (brgb.count < 6) {
 							//brgb.r += 25;
-							brgb.g -= 40;
-							brgb.b -= 40;
+							brgb.g -= 23;
+							brgb.b -= 26;
 							brgb.count++;
 						}
 						else if (brgb.count >= 6 && brgb.count < 12) {
 							//brgb.r -= 25;
-							brgb.g += 40;
-							brgb.b += 40;
+							brgb.g += 23;
+							brgb.b += 26;
 							brgb.count++;
 						}
 						else {
@@ -333,13 +342,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					startSlideX -= 20;
 				else if (startSlideX <= 0)
 					startSlideX = 0;
+
+				if (startSlideX == 0 && startSlideY == 0)
+					sideOn = TRUE;
 			}
 
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 
 		case 2:
-
+			SetTimerGradation(isTime, ClientRect.right / 2, hWnd);
 			rgb.r += 2;
 	/*		if(rgb.g - 107 > 0)
 				rgb.g -= 1;*/
@@ -531,9 +543,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (checkDifference(clickX, clickY, correct, ClientRect.right)) {
 					correct++;
 					score += 10;
-					brgb.r = 192;
-					brgb.g = 192;
-					brgb.b = 192;
+					brgb.r = 255;
+					brgb.g = 255;
+					brgb.b = 255;
 					bottomOn = TRUE;
 					scoreOn = TRUE;
 					SetTimer(hWnd, 6, 1, NULL);
@@ -546,9 +558,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 				else {
-					brgb.r = 192;
-					brgb.g = 192;
-					brgb.b = 192;
+					brgb.r = 255;
+					brgb.g = 255;
+					brgb.b = 255;
 					bottomOn = TRUE;
 					brgb.check = FALSE;
 					incorrect = TRUE;
@@ -581,9 +593,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					rgb.r = 0;
 					rgb.b = 136;
 					rgb.b = 187;
-					brgb.r = 192;
-					brgb.g = 192;
-					brgb.b = 192;
+					brgb.r = 255;
+					brgb.g = 255;
+					brgb.b = 255;
 					score = 0;
 					resultbg_time = 0;
 					pictureNumber = 0;
@@ -608,6 +620,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					is_resultbg_ani_on = true;
 					open = FALSE;
 					ClickOn = TRUE;
+					sideOn = FALSE;
 					bottomOn = FALSE;
 					load = TRUE;
 					scoreAnimation = FALSE;
@@ -751,7 +764,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			HFONT hFont, oldFont;
 			hFont = CreateFont(40, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("휴먼모음T"));        // 점수 폰트 조정
 			oldFont = (HFONT)SelectObject(memdc, hFont);
-			remain(memdc, correct, hWnd, bottomRGB, startSlideY, startSlideX);
+			remain(memdc, correct, hWnd, bottomRGB, startSlideY, startSlideX, open);
+			if (sideOn == TRUE)
+				;
 			
 			if(scoreOn == FALSE)
 				scoreImage(memdc, hWnd, temp_score, 6);
