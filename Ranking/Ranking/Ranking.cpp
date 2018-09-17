@@ -114,10 +114,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 CImage Rule[541];
 CImage Effect[181];
-CImage Rank[2];
 
 int indexR;
 int indexL;
+
+int LdT = 0, LdL = 0;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -140,8 +141,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			wsprintf(LoadText2, L"VFX\\Re\\RANK_EFFECT_%05d.png",i);
 			Effect[i].Load(LoadText2);
 		}
-		Rank[0].Load(L"VFX\\Re\\RANK.png");
-		Rank[1].Load(L"VFX\\Re\\RANK 2.png");
 		SetTimer(hWnd, 1, 34, NULL);
 		break;
     case WM_PAINT:
@@ -152,14 +151,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			GetClientRect(hWnd, &clientRECT);
 
-			if (indexL == 90)
-				Rank[0].Draw(hdc, clientRECT);
-			if (indexL == 180)
-				Rank[1].Draw(hdc, clientRECT);
 			if (indexR > 525)
 				Effect[indexL].Draw(hdc, clientRECT);
 			if (indexL == 0)
 				Rule[indexR].Draw(hdc, clientRECT);
+			
 
             EndPaint(hWnd, &ps);
         }
@@ -174,17 +170,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (indexL < 180)
 		{
-			if (indexL == 90)
+			if (indexL == 90 && LdT < 250)
 			{
-				Sleep(10000);
+				LdT++;
+				break;
 			}
 			indexL++;
 		}
 		else
 		{
-			Sleep(10000);
+			if (LdL < 250)
+			{
+				LdL++;
+				break;
+			}
 			indexR = 0;
 			indexL = 0;
+			LdT = 0;
+			LdL = 0;
 		}
 		InvalidateRect(hWnd, NULL, false);
 		break;
