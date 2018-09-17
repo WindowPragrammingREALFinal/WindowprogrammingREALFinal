@@ -76,7 +76,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_RANKING));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_RANKING);
+	wcex.lpszMenuName = NULL;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -111,48 +111,83 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  목적:  주 창의 메시지를 처리합니다.
-//
-//  WM_COMMAND  - 응용 프로그램 메뉴를 처리합니다.
-//  WM_PAINT    - 주 창을 그립니다.
-//  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
-//
-//
+
+CImage Rule[541];
+CImage Effect[181];
+CImage Rank[2];
+
+int indexR;
+int indexL;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // 메뉴 선택을 구문 분석합니다.
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
+	case WM_CREATE:
+		indexR = 0;
+		indexL = 0;
+
+		WCHAR LoadText[1000];
+		WCHAR LoadText2[1000];
+		
+		for (int i = 0; i < 540; i++)
+		{
+			wsprintf(LoadText, L"VFX\\RULE_%05d.png",i*2);
+			Rule[i].Load(LoadText);
+		}
+		for (int i = 0; i < 181; i++)
+		{
+			wsprintf(LoadText2, L"VFX\\Re\\RANK_EFFECT_%05d.png",i);
+			Effect[i].Load(LoadText2);
+		}
+		Rank[0].Load(L"VFX\\Re\\RANK.png");
+		Rank[1].Load(L"VFX\\Re\\RANK 2.png");
+		SetTimer(hWnd, 1, 34, NULL);
+		break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
+			RECT clientRECT;
+
+			GetClientRect(hWnd, &clientRECT);
+
+			if (indexL == 90)
+				Rank[0].Draw(hdc, clientRECT);
+			if (indexL == 180)
+				Rank[1].Draw(hdc, clientRECT);
+			if (indexR > 525)
+				Effect[indexL].Draw(hdc, clientRECT);
+			if (indexL == 0)
+				Rule[indexR].Draw(hdc, clientRECT);
+
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+	case WM_TIMER:
+		if (indexR < 539)
+		{
+			indexR++;
+		}
+		else if (indexL < 180)
+		{
+			if (indexL == 90)
+			{
+				Sleep(10000);
+			}
+			indexL++;
+		}
+		else
+		{
+			Sleep(10000);
+			indexR = 0;
+			indexL = 0;
+		}
+		InvalidateRect(hWnd, NULL, false);
+		break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
