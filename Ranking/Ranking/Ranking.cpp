@@ -112,8 +112,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
-CImage Rule[541];
-CImage Effect[181];
+CImage Rule;
+CImage Effect;
 
 int indexR;
 int indexL;
@@ -128,19 +128,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		indexR = 0;
 		indexL = 0;
 
+		WCHAR LoadText2[1000];		
 		WCHAR LoadText[1000];
-		WCHAR LoadText2[1000];
-		
-		for (int i = 0; i < 540; i++)
-		{
-			wsprintf(LoadText, L"VFX\\RULE_%05d.png",i*2);
-			Rule[i].Load(LoadText);
-		}
-		for (int i = 0; i < 181; i++)
-		{
-			wsprintf(LoadText2, L"VFX\\Re\\RANK_EFFECT_%05d.png",i);
-			Effect[i].Load(LoadText2);
-		}
+
+		wsprintf(LoadText, L"VFX\\RULE_00000.png");
+		Rule.Load(LoadText);
+
+		wsprintf(LoadText2, L"VFX\\Re\\RANK_EFFECT_00000.png");
+		Effect.Load(LoadText2);
+
 		SetTimer(hWnd, 1, 34, NULL);
 		break;
     case WM_PAINT:
@@ -152,9 +148,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetClientRect(hWnd, &clientRECT);
 
 			if (indexR > 525)
-				Effect[indexL].Draw(hdc, clientRECT);
+				Effect.Draw(hdc, clientRECT);
 			if (indexL == 0)
-				Rule[indexR].Draw(hdc, clientRECT);
+				Rule.Draw(hdc, clientRECT);
 			
 
             EndPaint(hWnd, &ps);
@@ -166,6 +162,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		if (indexR < 539)
 		{
+			Rule.Destroy();
+			WCHAR LoadText[1000];
+			wsprintf(LoadText, L"VFX\\RULE_%05d.png", indexR * 2);
+			Rule.Load(LoadText);
+
 			indexR++;
 		}
 		else if (indexL < 180)
@@ -176,6 +177,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 			indexL++;
+			Effect.Destroy();
+			WCHAR LoadText[1000];
+			wsprintf(LoadText, L"VFX\\Re\\RANK_EFFECT_%05d.png", indexL);
+			Effect.Load(LoadText);
 		}
 		else
 		{
