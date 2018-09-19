@@ -1,9 +1,12 @@
 // Ranking.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
 //
-
 #include "stdafx.h"
 #include "Ranking.h"
+#include <iostream>
+#include <fstream>
+#include <string>
 
+#define Debug TRUE
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -111,14 +114,53 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+typedef struct _Rank
+{
+	std::string name;
+	int studentNum;
+	int score;
+}Rank;
+
+typedef struct _node
+{
+	Rank data;
+	_node* pNext = nullptr;
+}Node;
 
 CImage Rule;
 CImage Effect;
+
+Node* FirstComputerList = NULL;
+Node* SecondComputerList = NULL;
+Node* ThirdComputerList = NULL;
+Node* TotalList = NULL;
 
 int indexR;
 int indexL;
 
 int LdT = 0, LdL = 0;
+
+void SetRanking()
+{
+	std::ifstream out;
+
+	out.open("Rank\\1\\Ranking.txt");
+	
+	while (!out.eof())
+	{
+		Node* tmp = new Node;
+		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
+		if (FirstComputerList == NULL)
+			FirstComputerList = tmp;
+		Node* i;
+		for (i = FirstComputerList; i->pNext != nullptr; i = i->pNext)
+		{}
+		i->pNext = tmp;
+	}
+
+	out.close();
+
+}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -128,14 +170,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		indexR = 0;
 		indexL = 0;
 
-		WCHAR LoadText2[1000];		
-		WCHAR LoadText[1000];
+		TCHAR LoadText2[1000];		
+		TCHAR LoadText[1000];
 
-		wsprintf(LoadText, L"VFX\\RULE_00000.png");
+		wsprintf(LoadText, "VFX\\RULE_00000.png");
 		Rule.Load(LoadText);
 
-		wsprintf(LoadText2, L"VFX\\Re\\RANK_EFFECT_00000.png");
+		wsprintf(LoadText2, "VFX\\Re\\RANK_EFFECT_00000.png");
 		Effect.Load(LoadText2);
+
+		SetRanking();
 
 		SetTimer(hWnd, 1, 34, NULL);
 		break;
@@ -147,11 +191,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			GetClientRect(hWnd, &clientRECT);
 
-			if (indexR > 525)
-				Effect.Draw(hdc, clientRECT);
-			if (indexL == 0)
-				Rule.Draw(hdc, clientRECT);
-			
+			if (Debug == FALSE)
+			{
+				if (indexR > 525)
+					Effect.Draw(hdc, clientRECT);
+				if (indexL == 0)
+					Rule.Draw(hdc, clientRECT);
+			}
+			if (Debug == TRUE)
+			{
+				TextOut(hdc, 100, 100, FirstComputerList->data.name.c_str(), 6);
+			}
 
             EndPaint(hWnd, &ps);
         }
@@ -160,11 +210,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
 	case WM_TIMER:
+	if (Debug == FALSE)
+	{
 		if (indexR < 539)
 		{
 			Rule.Destroy();
-			WCHAR LoadText[1000];
-			wsprintf(LoadText, L"VFX\\RULE_%05d.png", indexR * 2);
+			TCHAR LoadText[1000];
+			wsprintf(LoadText, "VFX\\RULE_%05d.png", indexR * 2);
 			Rule.Load(LoadText);
 
 			indexR++;
@@ -178,8 +230,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			indexL++;
 			Effect.Destroy();
-			WCHAR LoadText[1000];
-			wsprintf(LoadText, L"VFX\\Re\\RANK_EFFECT_%05d.png", indexL);
+			TCHAR LoadText[1000];
+			wsprintf(LoadText, "VFX\\Re\\RANK_EFFECT_%05d.png", indexL);
 			Effect.Load(LoadText);
 		}
 		else
@@ -195,6 +247,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			LdL = 0;
 		}
 		InvalidateRect(hWnd, NULL, false);
+	}
 		break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
