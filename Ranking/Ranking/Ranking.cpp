@@ -152,14 +152,54 @@ void SetRanking()
 		Node* tmp = new Node;
 		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
 		if (FirstComputerList == NULL)
+		{
 			FirstComputerList = tmp;
+			continue;
+		}
+		else if (FirstComputerList->pNext == NULL)
+		{
+			if (tmp->data.score > FirstComputerList->data.score)
+			{
+				FirstComputerList->pNext = tmp;
+			}
+			else
+			{
+				tmp->pNext = FirstComputerList;
+				FirstComputerList = tmp;
+			}
+			continue;
+		}
+		if (tmp->data.score < FirstComputerList->data.score)
+		{
+			tmp->pNext = FirstComputerList;
+			FirstComputerList = tmp;
+			continue;
+		}
 		Node* i;
 		for (i = FirstComputerList; i->pNext != nullptr; i = i->pNext)
-		{}
+		{
+			if (tmp->data.score < i->data.score)
+			{
+				Node* saver = tmp->pNext;
+				tmp->pNext = i;
+				saver->pNext = tmp;
+				continue;
+			}
+			tmp->pNext = i;
+		}
+		if (tmp->data.score < i->data.score)
+		{
+			Node* saver = tmp->pNext;
+			tmp->pNext = i;
+			saver->pNext = tmp;
+			continue;
+		}
 		i->pNext = tmp;
+		tmp->pNext = NULL;
 	}
 
 	out.close();
+
 
 	out.open("Rank\\2\\Ranking.txt");
 
@@ -168,12 +208,50 @@ void SetRanking()
 		Node* tmp = new Node;
 		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
 		if (SecondComputerList == NULL)
+		{
 			SecondComputerList = tmp;
+			continue;
+		}
+		else if (SecondComputerList->pNext == NULL)
+		{
+			if (tmp->data.score > SecondComputerList->data.score)
+			{
+				SecondComputerList->pNext = tmp;
+			}
+			else
+			{
+				tmp->pNext = SecondComputerList;
+				SecondComputerList = tmp;
+			}
+			continue;
+		}
+		if (tmp->data.score < SecondComputerList->data.score)
+		{
+			tmp->pNext = SecondComputerList;
+			SecondComputerList = tmp;
+			continue;
+		}
 		Node* i;
 		for (i = SecondComputerList; i->pNext != nullptr; i = i->pNext)
 		{
+			if (tmp->data.score < i->data.score)
+			{
+				Node* saver = tmp->pNext;
+				tmp->pNext = i;
+				saver->pNext = tmp;
+				continue;
+			}
+			tmp->pNext = i;
+		}
+		if (tmp->data.score < i->data.score)
+		{
+			Node* saver = tmp->pNext;
+			tmp->pNext = i;
+			saver->pNext = tmp;
+			continue;
 		}
 		i->pNext = tmp;
+		tmp->pNext = NULL;
 	}
 
 	out.close();
@@ -185,12 +263,50 @@ void SetRanking()
 		Node* tmp = new Node;
 		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
 		if (ThirdComputerList == NULL)
+		{
 			ThirdComputerList = tmp;
+			continue;
+		}
+		else if (ThirdComputerList->pNext == NULL)
+		{
+			if (tmp->data.score > ThirdComputerList->data.score)
+			{
+				ThirdComputerList->pNext = tmp;
+			}
+			else
+			{
+				tmp->pNext = ThirdComputerList;
+				ThirdComputerList = tmp;
+			}
+			continue;
+		}
+		if (tmp->data.score < ThirdComputerList->data.score)
+		{
+			tmp->pNext = ThirdComputerList;
+			ThirdComputerList = tmp;
+			continue;
+		}
 		Node* i;
 		for (i = ThirdComputerList; i->pNext != nullptr; i = i->pNext)
 		{
+			if (tmp->data.score < i->data.score)
+			{
+				Node* saver = tmp->pNext;
+				tmp->pNext = i;
+				saver->pNext = tmp;
+				continue;
+			}
+			tmp->pNext = i;
+		}
+		if (tmp->data.score < i->data.score)
+		{
+			Node* saver = tmp->pNext;
+			tmp->pNext = i;
+			saver->pNext = tmp;
+			continue;
 		}
 		i->pNext = tmp;
+		tmp->pNext = NULL;
 	}
 
 	out.close();
@@ -243,7 +359,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				USES_CONVERSION;
 
-				TextOut(hdc, 100, 100, A2W(SecondComputerList->data.name.c_str()), 3);
+				Node* i;
+				int a = 0;
+				
+				for (i = FirstComputerList; i != nullptr; i = i->pNext)
+				{
+					WCHAR LoadText[20];
+					WCHAR LoadTextx[20];
+
+					TextOut(hdc, 100, 100 + 50*a, A2W(i->data.name.c_str()), 3);
+					wsprintf(LoadText, L"%d", i->data.studentNum);
+					TextOut(hdc, 280, 100 + 50 * a, LoadText, 20);
+					wsprintf(LoadTextx, L"%d", i->data.score);
+					TextOut(hdc, 700, 100 + 50 * a, LoadTextx, 20);
+					a++;
+				}
 			}
 
 			
@@ -319,3 +449,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
+
+
+//정렬해서 TotalRanking 리스트로 만들기
+//출력하기
