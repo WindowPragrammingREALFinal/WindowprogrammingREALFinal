@@ -134,7 +134,9 @@ CImage Effect;
 Node* FirstComputerList = NULL;
 Node* SecondComputerList = NULL;
 Node* ThirdComputerList = NULL;
-Node* TotalList = NULL;
+
+int TotalIndex = 0;
+Rank TotalArray[18];
 
 int indexR;
 int indexL;
@@ -175,7 +177,9 @@ void SetRanking()
 			FirstComputerList = tmp;
 			continue;
 		}
+
 		Node* i;
+		bool br = false;
 		for (i = FirstComputerList; i->pNext != nullptr; i = i->pNext)
 		{
 			if (tmp->data.score < i->data.score)
@@ -183,10 +187,13 @@ void SetRanking()
 				Node* saver = tmp->pNext;
 				tmp->pNext = i;
 				saver->pNext = tmp;
-				continue;
-			}
+				br = true;
+				break;
+			}	
 			tmp->pNext = i;
 		}
+		if (br == true)
+			continue;
 		if (tmp->data.score < i->data.score)
 		{
 			Node* saver = tmp->pNext;
@@ -232,6 +239,7 @@ void SetRanking()
 			continue;
 		}
 		Node* i;
+		bool br = false;
 		for (i = SecondComputerList; i->pNext != nullptr; i = i->pNext)
 		{
 			if (tmp->data.score < i->data.score)
@@ -239,10 +247,13 @@ void SetRanking()
 				Node* saver = tmp->pNext;
 				tmp->pNext = i;
 				saver->pNext = tmp;
-				continue;
+				br = true;
+				break;
 			}
 			tmp->pNext = i;
 		}
+		if (br == true)
+			continue;
 		if (tmp->data.score < i->data.score)
 		{
 			Node* saver = tmp->pNext;
@@ -287,6 +298,7 @@ void SetRanking()
 			continue;
 		}
 		Node* i;
+		bool br = false;
 		for (i = ThirdComputerList; i->pNext != nullptr; i = i->pNext)
 		{
 			if (tmp->data.score < i->data.score)
@@ -294,10 +306,13 @@ void SetRanking()
 				Node* saver = tmp->pNext;
 				tmp->pNext = i;
 				saver->pNext = tmp;
-				continue;
+				br = true;
+				break;
 			}
 			tmp->pNext = i;
 		}
+		if (br == true)
+			continue;
 		if (tmp->data.score < i->data.score)
 		{
 			Node* saver = tmp->pNext;
@@ -311,6 +326,73 @@ void SetRanking()
 
 	out.close();
 
+	//¸ÓÁö
+	while(TotalIndex < 18)
+	{
+		Node* Ftmp; Node* Stmp; Node* Ttmp;
+		Node* Fztmp; Node* Sztmp; Node* Tztmp;
+		Ftmp = FirstComputerList;
+		Stmp = SecondComputerList;
+		Ttmp = ThirdComputerList;
+		Fztmp = Ftmp;
+		Sztmp = Stmp;
+		Tztmp = Ttmp;		
+
+		for (Ftmp = FirstComputerList; Ftmp->pNext != nullptr; Ftmp = Ftmp->pNext)
+			Fztmp = Ftmp;
+		for (Stmp = SecondComputerList; Stmp->pNext != nullptr; Stmp = Stmp->pNext)
+			Sztmp = Stmp;
+		for (Ttmp = ThirdComputerList; Ttmp->pNext != nullptr; Ttmp = Ttmp->pNext)
+			Tztmp = Ttmp;
+
+		if (Fztmp == NULL && Sztmp == NULL && Tztmp == NULL)
+			break;
+
+		int d;
+		if (Ftmp->data.score > Stmp->data.score)
+		{
+			if (Ftmp->data.score > Ttmp->data.score)
+			{
+				d = 1;
+			}
+			else
+			{
+				d = 3;
+			}
+		}
+		else
+		{
+			if (Stmp->data.score > Ttmp->data.score)
+			{
+				d = 2;
+			}
+			else
+			{
+				d = 3;
+			}
+		}
+		switch (d)
+		{
+		case 1:
+			memcpy(&TotalArray[TotalIndex], &Ftmp->data, sizeof(Rank));
+			TotalIndex++;
+			//delete Ftmp;
+			Fztmp->pNext = NULL;
+			break;
+		case 2:
+			memcpy(&TotalArray[TotalIndex], &Stmp->data, sizeof(Rank));
+			TotalIndex++;
+			//delete Stmp;
+			Sztmp->pNext = NULL;
+			break;
+		case 3:
+			memcpy(&TotalArray[TotalIndex], &Ttmp->data, sizeof(Rank));
+			TotalIndex++;
+			//delete Ttmp;
+			Tztmp->pNext = NULL;
+			break;
+		}
+	}
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -362,7 +444,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				Node* i;
 				int a = 0;
 				
-				for (i = FirstComputerList; i != nullptr; i = i->pNext)
+				/*for (i = SecondComputerList; i != nullptr; i = i->pNext)
 				{
 					WCHAR LoadText[20];
 					WCHAR LoadTextx[20];
@@ -373,6 +455,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					wsprintf(LoadTextx, L"%d", i->data.score);
 					TextOut(hdc, 700, 100 + 50 * a, LoadTextx, 20);
 					a++;
+				}*/
+				for (int i = 0; i < 18; i++)
+				{
+					WCHAR LoadText[20];
+					WCHAR LoadTextx[20];
+
+					TextOut(hdc, 100, 100 + 50 * i, A2W(TotalArray[i].name.c_str()), 3);
+					wsprintf(LoadText, L"%d", TotalArray[i].studentNum);
+					TextOut(hdc, 280, 100 + 50 * i, LoadText, 20);
+					wsprintf(LoadTextx, L"%d", TotalArray[i].score);
+					TextOut(hdc, 700, 100 + 50 * i, LoadTextx, 20);
 				}
 			}
 
