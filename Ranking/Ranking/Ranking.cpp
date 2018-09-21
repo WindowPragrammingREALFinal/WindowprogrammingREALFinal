@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <atlbase.h>
 
 #define Debug TRUE
 #define MAX_LOADSTRING 100
@@ -160,6 +161,40 @@ void SetRanking()
 
 	out.close();
 
+	out.open("Rank\\2\\Ranking.txt");
+
+	while (!out.eof())
+	{
+		Node* tmp = new Node;
+		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
+		if (SecondComputerList == NULL)
+			SecondComputerList = tmp;
+		Node* i;
+		for (i = SecondComputerList; i->pNext != nullptr; i = i->pNext)
+		{
+		}
+		i->pNext = tmp;
+	}
+
+	out.close();
+
+	out.open("Rank\\3\\Ranking.txt");
+
+	while (!out.eof())
+	{
+		Node* tmp = new Node;
+		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
+		if (ThirdComputerList == NULL)
+			ThirdComputerList = tmp;
+		Node* i;
+		for (i = ThirdComputerList; i->pNext != nullptr; i = i->pNext)
+		{
+		}
+		i->pNext = tmp;
+	}
+
+	out.close();
+
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -173,10 +208,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		TCHAR LoadText2[1000];		
 		TCHAR LoadText[1000];
 
-		wsprintf(LoadText, "VFX\\RULE_00000.png");
+		wsprintf(LoadText, L"VFX\\RULE_00000.png");
 		Rule.Load(LoadText);
 
-		wsprintf(LoadText2, "VFX\\Re\\RANK_EFFECT_00000.png");
+		wsprintf(LoadText2, L"VFX\\Re\\RANK_EFFECT_00000.png");
 		Effect.Load(LoadText2);
 
 		SetRanking();
@@ -189,6 +224,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
 			RECT clientRECT;
 
+			HFONT hFont, saveFont;
+
+			hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("´ÙÀ½_Regular"));
+			SetTextColor(hdc,RGB(62, 151, 255));
+			saveFont = (HFONT)SelectObject(hdc, hFont);
+
 			GetClientRect(hWnd, &clientRECT);
 
 			if (Debug == FALSE)
@@ -200,9 +241,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			if (Debug == TRUE)
 			{
-				TextOut(hdc, 100, 100, FirstComputerList->data.name.c_str(), 6);
+				USES_CONVERSION;
+
+				TextOut(hdc, 100, 100, A2W(SecondComputerList->data.name.c_str()), 3);
 			}
 
+			
+			DeleteObject(SelectObject(hdc, saveFont));
             EndPaint(hWnd, &ps);
         }
         break;
@@ -216,7 +261,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			Rule.Destroy();
 			TCHAR LoadText[1000];
-			wsprintf(LoadText, "VFX\\RULE_%05d.png", indexR * 2);
+			wsprintf(LoadText, L"VFX\\RULE_%05d.png", indexR * 2);
 			Rule.Load(LoadText);
 
 			indexR++;
@@ -231,7 +276,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			indexL++;
 			Effect.Destroy();
 			TCHAR LoadText[1000];
-			wsprintf(LoadText, "VFX\\Re\\RANK_EFFECT_%05d.png", indexL);
+			wsprintf(LoadText, L"VFX\\Re\\RANK_EFFECT_%05d.png", indexL);
 			Effect.Load(LoadText);
 		}
 		else
