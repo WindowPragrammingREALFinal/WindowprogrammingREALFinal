@@ -7,7 +7,7 @@
 #include <string>
 #include <atlbase.h>
 
-#define Debug TRUE
+#define Debug FALSE
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -135,6 +135,7 @@ Node* FirstComputerList = NULL;
 Node* SecondComputerList = NULL;
 Node* ThirdComputerList = NULL;
 
+int TotalNum = 0;
 int TotalIndex = 0;
 Rank TotalArray[18];
 
@@ -142,6 +143,8 @@ int indexR;
 int indexL;
 
 int LdT = 0, LdL = 0;
+
+bool PrintRank, FirstRank, SecondRank;
 
 void SetRanking()
 {
@@ -151,6 +154,7 @@ void SetRanking()
 	
 	while (!out.eof())
 	{
+		TotalNum++;
 		Node* tmp = new Node;
 		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
 		if (FirstComputerList == NULL)
@@ -212,6 +216,7 @@ void SetRanking()
 
 	while (!out.eof())
 	{
+		TotalNum++;
 		Node* tmp = new Node;
 		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
 		if (SecondComputerList == NULL)
@@ -271,6 +276,7 @@ void SetRanking()
 
 	while (!out.eof())
 	{
+		TotalNum++;
 		Node* tmp = new Node;
 		out >> tmp->data.name >> tmp->data.studentNum >> tmp->data.score;
 		if (ThirdComputerList == NULL)
@@ -327,70 +333,91 @@ void SetRanking()
 	out.close();
 
 	//머지
-	while(TotalIndex < 18)
+	if (TotalNum < 18)
 	{
-		Node* Ftmp; Node* Stmp; Node* Ttmp;
-		Node* Fztmp; Node* Sztmp; Node* Tztmp;
-		Ftmp = FirstComputerList;
-		Stmp = SecondComputerList;
-		Ttmp = ThirdComputerList;
-		Fztmp = Ftmp;
-		Sztmp = Stmp;
-		Tztmp = Ttmp;		
-
-		for (Ftmp = FirstComputerList; Ftmp->pNext != nullptr; Ftmp = Ftmp->pNext)
+		PrintRank = false;
+	}
+	else
+	{
+		PrintRank = true;
+		while (TotalIndex < 18)
+		{
+			Node* Ftmp; Node* Stmp; Node* Ttmp;
+			Node* Fztmp; Node* Sztmp; Node* Tztmp;
+			Ftmp = FirstComputerList;
+			Stmp = SecondComputerList;
+			Ttmp = ThirdComputerList;
 			Fztmp = Ftmp;
-		for (Stmp = SecondComputerList; Stmp->pNext != nullptr; Stmp = Stmp->pNext)
 			Sztmp = Stmp;
-		for (Ttmp = ThirdComputerList; Ttmp->pNext != nullptr; Ttmp = Ttmp->pNext)
 			Tztmp = Ttmp;
 
-		if (Fztmp == NULL && Sztmp == NULL && Tztmp == NULL)
-			break;
+			for (Ftmp = FirstComputerList; Ftmp->pNext != nullptr; Ftmp = Ftmp->pNext)
+				Fztmp = Ftmp;
+			for (Stmp = SecondComputerList; Stmp->pNext != nullptr; Stmp = Stmp->pNext)
+				Sztmp = Stmp;
+			for (Ttmp = ThirdComputerList; Ttmp->pNext != nullptr; Ttmp = Ttmp->pNext)
+				Tztmp = Ttmp;
 
-		int d;
-		if (Ftmp->data.score > Stmp->data.score)
-		{
-			if (Ftmp->data.score > Ttmp->data.score)
+			if (Fztmp == NULL)
 			{
-				d = 1;
+				Fztmp = new Node;
+				Fztmp->data.score = 0;
+			}
+			if (Sztmp == NULL)
+			{
+				Sztmp = new Node;
+				Sztmp->data.score = 0;
+			}
+			if (Tztmp == NULL)
+			{
+				Tztmp = new Node;
+				Tztmp->data.score = 0;
+			}
+
+			int d;
+			if (Ftmp->data.score > Stmp->data.score)
+			{
+				if (Ftmp->data.score > Ttmp->data.score)
+				{
+					d = 1;
+				}
+				else
+				{
+					d = 3;
+				}
 			}
 			else
 			{
-				d = 3;
+				if (Stmp->data.score > Ttmp->data.score)
+				{
+					d = 2;
+				}
+				else
+				{
+					d = 3;
+				}
 			}
-		}
-		else
-		{
-			if (Stmp->data.score > Ttmp->data.score)
+			switch (d)
 			{
-				d = 2;
+			case 1:
+				memcpy(&TotalArray[TotalIndex], &Ftmp->data, sizeof(Rank));
+				TotalIndex++;
+				//delete Ftmp;
+				Fztmp->pNext = NULL;
+				break;
+			case 2:
+				memcpy(&TotalArray[TotalIndex], &Stmp->data, sizeof(Rank));
+				TotalIndex++;
+				//delete Stmp;
+				Sztmp->pNext = NULL;
+				break;
+			case 3:
+				memcpy(&TotalArray[TotalIndex], &Ttmp->data, sizeof(Rank));
+				TotalIndex++;
+				//delete Ttmp;
+				Tztmp->pNext = NULL;
+				break;
 			}
-			else
-			{
-				d = 3;
-			}
-		}
-		switch (d)
-		{
-		case 1:
-			memcpy(&TotalArray[TotalIndex], &Ftmp->data, sizeof(Rank));
-			TotalIndex++;
-			//delete Ftmp;
-			Fztmp->pNext = NULL;
-			break;
-		case 2:
-			memcpy(&TotalArray[TotalIndex], &Stmp->data, sizeof(Rank));
-			TotalIndex++;
-			//delete Stmp;
-			Sztmp->pNext = NULL;
-			break;
-		case 3:
-			memcpy(&TotalArray[TotalIndex], &Ttmp->data, sizeof(Rank));
-			TotalIndex++;
-			//delete Ttmp;
-			Tztmp->pNext = NULL;
-			break;
 		}
 	}
 }
@@ -425,10 +452,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			HFONT hFont, saveFont;
 
 			hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("다음_Regular"));
-			SetTextColor(hdc,RGB(62, 151, 255));
+			SetTextColor(hdc, RGB(62, 151, 255));
+
 			saveFont = (HFONT)SelectObject(hdc, hFont);
 
 			GetClientRect(hWnd, &clientRECT);
+
+			USES_CONVERSION;
 
 			if (Debug == FALSE)
 			{
@@ -436,15 +466,57 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					Effect.Draw(hdc, clientRECT);
 				if (indexL == 0)
 					Rule.Draw(hdc, clientRECT);
+
+				if (PrintRank)
+				{
+					if (indexL == 90 && LdT < 250)
+					{
+						for (int i = 0; i < 9; i++)
+						{
+							WCHAR LoadText[20];
+							WCHAR LoadTextx[20];
+
+							
+							TextOut(hdc,(clientRECT.right/12)*7.2, clientRECT.bottom / 30 + clientRECT.bottom / 10 * (i + 1), A2W(TotalArray[i].name.c_str()), 3);
+							wsprintf(LoadText, L"%d", TotalArray[i].studentNum);
+							TextOut(hdc, (clientRECT.right / 12)*8.35, clientRECT.bottom / 30 + clientRECT.bottom / 10 * (i + 1), LoadText, lstrlen(LoadText));
+							wsprintf(LoadTextx, L"%d", TotalArray[i].score);
+							TextOut(hdc, (clientRECT.right / 12)*10.8, clientRECT.bottom / 30 + clientRECT.bottom / 10 * (i + 1), LoadTextx, lstrlen(LoadTextx));
+						}
+					}
+					else if (indexL == 180 && LdL < 250)
+					{
+						for (int i = 9; i < 18; i++)
+						{
+							WCHAR LoadText[20];
+							WCHAR LoadTextx[20];
+
+							TextOut(hdc, (clientRECT.right / 12)*7, clientRECT.bottom / 30 + clientRECT.bottom / 10 * (i - 8), A2W(TotalArray[i].name.c_str()), 3);
+							wsprintf(LoadText, L"%d", TotalArray[i].studentNum);
+							TextOut(hdc, (clientRECT.right / 12)*8.35, clientRECT.bottom / 30 + clientRECT.bottom / 10 * (i - 8), LoadText, lstrlen(LoadText));
+							wsprintf(LoadTextx, L"%d", TotalArray[i].score);
+							TextOut(hdc, (clientRECT.right / 12)*10.8, clientRECT.bottom / 30 + clientRECT.bottom / 10 * (i - 8), LoadTextx, lstrlen(LoadTextx));
+						}
+					}
+				}
+				else
+				{
+					if (indexL == 90 && LdT < 250)
+					{
+						TextOut(hdc, (clientRECT.right / 12)*8.5, clientRECT.bottom / 2 + 10, L"랭킹 집계 전", 13);
+					}
+					if (indexL == 180 && LdL < 250)
+					{
+						TextOut(hdc, (clientRECT.right / 12)*8.5, clientRECT.bottom / 2 + 10, L"랭킹 집계 전", 13);
+					}
+				}
 			}
 			if (Debug == TRUE)
 			{
-				USES_CONVERSION;
-
 				Node* i;
 				int a = 0;
 				
-				/*for (i = SecondComputerList; i != nullptr; i = i->pNext)
+				for (i = SecondComputerList; i != nullptr; i = i->pNext)
 				{
 					WCHAR LoadText[20];
 					WCHAR LoadTextx[20];
@@ -455,7 +527,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					wsprintf(LoadTextx, L"%d", i->data.score);
 					TextOut(hdc, 700, 100 + 50 * a, LoadTextx, 20);
 					a++;
-				}*/
+				}
 				for (int i = 0; i < 18; i++)
 				{
 					WCHAR LoadText[20];
@@ -491,6 +563,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else if (indexL < 180)
 		{
+
 			if (indexL == 90 && LdT < 250)
 			{
 				LdT++;
@@ -504,6 +577,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		else
 		{
+
 			if (LdL < 250)
 			{
 				LdL++;
