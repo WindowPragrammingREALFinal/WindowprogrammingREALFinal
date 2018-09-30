@@ -200,6 +200,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		bottomBarLoad();
 		LoadBack();
 		TempLoad();
+		resetTimerRGB();
 		SetTimerGradation(isTime, ClientRect.right / 2, hWnd);
 
 		SetTimer(hWnd, 1, 1, NULL);
@@ -347,6 +348,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (startSlideX == 0 && startSlideY == 0)
 					sideOn = TRUE;
 			}
+			if(isTime == 96)
+				SetTimerGradation(isTime, ClientRect.right / 2, hWnd);
 
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
@@ -471,6 +474,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 			LoadDifferenctPosition(pictureNumber, differenceNum, hWnd);
 			nowDisplay = 1;
+			resetTimerRGB();
+			SetTimerGradation(isTime, ClientRect.right / 2, hWnd);
 			SetTimer(hWnd, 2, 1000, NULL);
 
 			break;

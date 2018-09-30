@@ -27,8 +27,31 @@ void SetTimerGradation(int isTime, int half, HWND hWnd)
 {
 	RECT ClientRECT;
 	GetClientRect(hWnd, &ClientRECT);
+	if (isTime == 96) {
+		vert[0].x = half - 15;
+		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 
-	if (isTime > 88) { // 1
+		vert[0].Red = GetRValue(tempRGB) << 8;
+		vert[0].Green = GetGValue(tempRGB) << 8;
+		vert[0].Blue = GetBValue(tempRGB) << 8;
+		vert[0].Alpha = 255 << 8;
+
+		// 그라데이션의 끝좌표를 명시한다.
+		vert[1].x = half + 15;
+		//vert[1].y = height + half - 100;
+		vert[1].y = (ClientRECT.right / 2 - 50) + 82;
+
+		// 그라데이션의 끝색상를 명시한다.
+		vert[1].Red = GetRValue(tempRGB) << 8;
+		vert[1].Green = GetGValue(tempRGB) << 8;
+		vert[1].Blue = GetBValue(tempRGB) << 8;
+		vert[1].Alpha = 0xFFFFFF;
+
+		gtr.UpperLeft = 0;
+		gtr.LowerRight = 1;
+	}
+
+	else if (isTime > 88) { // 1
 		vert[0].x = half - 15;
 		vert[0].y = 135 + (2 * ((double)(half - 120) / 96)) + ((96 - isTime) * (double)(half - 120) / 96);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Result.h"
+#include <atlbase.h>
 #include <iostream>
 #include <fstream>
 
@@ -143,10 +144,10 @@ void saveData(int score, WCHAR name[100], WCHAR studentNumber[20])
 
 	// 여기서 사용자 이름, 점수를 저장해주세요
 
-	std::wstring wstrText = name;
 
+	USES_CONVERSION;
 
 	FILE* DataSaveStream = fopen("Ranking.txt", "a");
-	fprintf(DataSaveStream, "%ws %d\n", studentNumber, score);
+	fprintf(DataSaveStream, "%s %ws %d\n", W2A(name), studentNumber, score);
 	fclose(DataSaveStream);
 }
