@@ -68,9 +68,8 @@ void DestroyRestartButton()
 }
 
 
-void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide, int score_digit, bool *return_but_on, HWND hWnd, COLORREF rgb) // 결과창 애니메이션도 있음
+void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide, int score_digit, bool* return_but_on, HWND hWnd, COLORREF rgb) // 결과창 애니메이션도 있음
 {
-	
 	RECT ClientRECT;
 	HBRUSH hBrush, oldBrush;
 	WCHAR LoadText[100];
@@ -125,16 +124,25 @@ void Result(HDC memdc, int score, WCHAR name[], WCHAR studentNumber[], int slide
 		DeleteObject(hFont);
 		DeleteObject(oldFont);
 
-		*return_but_on = true;   //학번 이름까지 출력하면 뒤로가기 버튼 활성화
+		if (*return_but_on == false)
+			*return_but_on = true;   //학번 이름까지 출력하면 뒤로가기 버튼 활성화
+
+		if (*return_but_on == true)  //결과창 점수등 출력한 후 뒤로가기 버튼 on 되면
+		{
+			if (score >= 120)  //쿠폰 받는 스코어 컷
+			{	
+				CImage Get_coupon;
+
+				Get_coupon.Load(L"Get_coupon\\Get_coupon.png");
+				Get_coupon.Draw(memdc, (ClientRECT.left+ ClientRECT.right)/2-490, 274,980, 160);
+
+				Get_coupon.Destroy();
+			}
+		}
 	}
 
 
-	if (*return_but_on == true)  //결과창 점수등 출력한 후 뒤로가기 버튼 on 되면
-	{
-
-		//뒤로가기 버튼 이미지 출력
-
-	}
+	
 }
 
 
